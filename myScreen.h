@@ -1,208 +1,109 @@
-#include "EditField.h"
-#define MAX_MENU_ITEM  5
-struct MyMenuItem {
-  public:
-  byte Col;  
-  byte Row;
-  void (*Action)(byte); //https://www.eskimo.com/~scs/cclass/int/sx10a.html
-};
-class MyMenu {
-  public:
-  byte ItemsCount;
-  byte SelectedItem=0;     
-  MyMenuItem Items[5]; 
-  void GotoNext(void); 
-  void GotoPrevious(void);
-  void Show(void); 
-};
-void MyMenu::GotoNext(void){
-SelectedItem++;  
-if (SelectedItem==ItemsCount)SelectedItem=0;
-Buttton[BUTTON_RIGHT].Value=false;  
-Buttton[BUTTON_RIGHT].Block=true;
-Show();
-}
-void MyMenu::GotoPrevious(void){
-SelectedItem--;  
-if (SelectedItem==255)SelectedItem=ItemsCount-1;
-Buttton[BUTTON_LEFT].Value=false;  
-Buttton[BUTTON_LEFT].Block=true;
-Show();
-}
-
-void MyMenu::Show(void){
-lcd.setCursor(Items[SelectedItem].Col,Items[SelectedItem].Row);
-lcd.blink();        
-}
 //******************************************************************
-class MyField{
-  public:
-  byte Type;//0-char,byte,1-int,2-Float,Double,3-String 
-  byte Col;
-  byte Row;
-  byte Width;
+struct MyField{  
+   const byte Type PROGMEM;//0-char,byte,1-int,2-Float,Double,3-String 
+   const byte Col PROGMEM ;
+   const byte Row PROGMEM ;
+   const byte Width PROGMEM ;
+   const byte Decimal PROGMEM;
+   const byte Action PROGMEM ; //0-noAct, 1-Change Screen, 2-Edit
+   const byte ActionData PROGMEM; //Action=0 => ActionData=Index Change Screen
   //char Format[8];
-  void* Value; 
-  void Show(void); 
+  const void* Value PROGMEM;   //https://www.eskimo.com/~scs/cclass/int/sx10a.html
 };
-void MyField::Show(void){//http://www.cplusplus.com/reference/cstdio/printf/
-char buff[16]; 
-char Format[8];//https://arduinomaster.ru/program/arduino-string-stroki/
-switch ( Type ) {
-case 0:
-  sprintf(Format,"%%%uu",Width);  
-  sprintf(buff,Format,*(byte*)Value);
-  break;
-case 1:
-  sprintf(Format,"%%%uu",Width);  
-  sprintf(buff,Format,*(int*)Value);
-  break;
-case 2:  
-  //dtostrf(floatVar, minStringWidthIncDecimalPoint, numVarsAfterDecimal, charBuf);
-  dtostrf(*(float*)Value, Width, 1, buff);    
-  break;    
-default:
-  sprintf(buff,"%3d",*(byte*)Value);
-  break;
+void FldStrValue(char* buff,MyField* Field)
+{ 
+char Format[8];   
+switch (Field->Type )
+  {
+  case 0:
+    sprintf(Format,"%%%uu",Field->Width);  
+    sprintf(buff,Format,*(byte*)Field->Value);
+    break;
+  case 1:
+    sprintf(Format,"%%%uu",Field->Width);  
+    sprintf(buff,Format,*(int*)Field->Value);
+    break;
+  case 2:  
+    //dtostrf(floatVar, minStringWidthIncDecimalPoint, numVarsAfterDecimal, charBuf);
+    dtostrf(*(float*)Field->Value, Field->Width, Field->Decimal, buff);    
+    break;    
+  default:
+    sprintf(buff,"%3s",*(byte*)Field->Value);
+    break;
+  }   
 }
-lcd.setCursor(Col,Row);
-lcd.print(buff);  
-}
+#include "myEditField.h"
 //******************************************************************
-class MyScreen{
-  public:  
-  //String  *Rows[LCD_ROWS];
-  char* Rows[LCD_ROWS];
-  MyMenu Menu;
-  byte FieldsCount;
-  MyField Fields[6];
-  void Show(void); 
+struct MyScreen{  
+  const char* Rows PROGMEM;  
+  const byte FieldsCount;
+  const MyField* Fields;
+  byte PreviousScreen;    
   };
-void MyScreen::Show(void){
-lcd.clear();
-for (byte r=0;r!=LCD_ROWS;r++)
-  {
-  lcd.setCursor(0, r);
-  //char Fch;
-  for (byte c = 0; c != LCD_COLS; c++)
-  {
-    //Fch =  pgm_read_byte_near(Rows[r] + c);
-    //lcd.write(Fch);
-    lcd.write(pgm_read_byte_near(Rows[r] + c));
-  }
-  for (int f=0;f!=FieldsCount;f++)
-    Fields[f].Show();
-  Menu.Show();
-  }
-if (Menu.ItemsCount>0)
-  {
-  //lcd.setCursor(Screen.MenuItemPosition[Screen.curMenuItem][0],Screen.MenuItemPosition[Screen->curMenuItem][1]);
-  lcd.blink();
-  }  
-for (byte i=0;i!=BUTTON_PIN_COUNT;i++)Buttton[i].Block=false;
-}
 //******************************************************************      
-#define MAX_SCREENS 16
-class MyScreens{
+#define MAX_SCREENS 1
+class MyScreenManager{
   public:  
   int current=-1;
-  MyScreen *Screens[MAX_SCREENS];  
-  void Add(MyScreen *Screen);
+  byte SelectedField;
+  const MyScreen *Screens[MAX_SCREENS] PROGMEM;  
+  //void Add(MyScreen *Screen);
+  void Show(int Item);
+  void Loop(short);
+  inline void GotoNextField(void);
+  inline void GotoPreviousField(void);
+  void ActField(void);  
 };
-void MyScreens::Add(MyScreen *Screen){
-current++;  
-Screens[current]=Screen;
-Screen->Show();
+void MyScreenManager::ActField(void){//const byte Action PROGMEM ; //0-noAct, 1-Change Screen, 2-Edit
+if (Screens[current]->Fields[SelectedField].Action==2)
+  { 
+  EditField.EditMode=true;  
+  EditField.Show(&Screens[current]->Fields[SelectedField]);
+  }
 }
-MyScreens ScreenManager;
-
-//******************************************************************
-void CreateEdit(){
-//******************************************************************
+void MyScreenManager::GotoNextField(void){
+SelectedField++;  
+if (SelectedField==Screens[current]->FieldsCount)SelectedField=0;
+lcd.setCursor(Screens[current]->Fields[SelectedField].Col-1+Screens[current]->Fields[SelectedField].Width,Screens[current]->Fields[SelectedField].Row);
 }
-
-
-//******************************************************************
-void LoopScreen(){
-//******************************************************************
-/*if (Screen->Menu.ItemCount>0)
+void MyScreenManager::GotoPreviousField(void){
+SelectedField--;  
+if (SelectedField==255)SelectedField=Screens[current]->FieldsCount-1;
+lcd.setCursor(Screens[current]->Fields[SelectedField].Col-1+Screens[current]->Fields[SelectedField].Width,Screens[current]->Fields[SelectedField].Row);
+}
+void MyScreenManager::Loop(short Key){
+if (EditField.EditMode) EditField.Loop(Key);
+else
+if (Key==KEY_RIGHT)     GotoNextField();
+else if (Key==KEY_LEFT) GotoPreviousField(); 
+else if (Key==KEY_ENTER)ActField();
+else if (Key==KEY_ESC) ;
+}    
+void MyScreenManager::Show(int Item){
+current=Item;  
+lcd.clear();
+char* adr=Screens[Item]->Rows;
+for (byte r=0;r!=LCD_ROWS;r++)
   {
-    if (Buttton[BUTTON_LEFT].Value)
+  lcd.setCursor(0, r);  
+  for (byte c = 0; c != LCD_COLS; c++)
     {
-    Buttton[BUTTON_LEFT].Value=false;  
-    Buttton[BUTTON_LEFT].Block=true;
-    Screen->curMenuItem--;  
-    if (Screen->curMenuItem==255)Screen->curMenuItem=Screen->Menu.ItemCount-1;
-    //lcd.setCursor(Screen->MenuItemPosition[Screen->curMenuItem][0],Screen->MenuItemPosition[Screen->curMenuItem][1]);
-    lcd.blink();    
+      lcd.write(pgm_read_byte_near(adr));
+      adr++;
     }
-    if (Buttton[BUTTON_RIGHT].Value)
-    {
-    Buttton[BUTTON_RIGHT].Value=false;  
-    Buttton[BUTTON_RIGHT].Block=true;
-    Screen->curMenuItem++;  
-    if (Screen->curMenuItem==Screen->Menu.ItemCount)Screen->curMenuItem=0;
-    //lcd.setCursor(Screen.MenuItemPosition[Screen->curMenuItem][0],Screen->MenuItemPosition[Screen->curMenuItem][1]);
-    lcd.blink();    
-    }
-    if (Buttton[BUTTON_ESC].Value)
-    {
-    Buttton[BUTTON_ESC].Value=false;  
-    Buttton[BUTTON_ESC].Block=true;
-    if (Screen->PreviousScreen!=0)
-      CreateScreen(Screen->PreviousScreen);
-    }
-    if (Buttton[BUTTON_ENTER].Value)
-    {
-    Buttton[BUTTON_ENTER].Value=false;  
-    Buttton[BUTTON_ENTER].Block=true;        
-    }
-  }*/
-}  
-//******************************************************************
-void KBroutine_Menu()
-//******************************************************************
-{
+  } 
+char buff[16]; 
+for (byte f=0;f!=Screens[current]->FieldsCount;f++)
+  {
+  lcd.setCursor(Screens[current]->Fields[f].Col,Screens[Item]->Fields[f].Row); 
+  FldStrValue(buff,&Screens[current]->Fields[f]);  
+  lcd.print(buff);  
+  }
+if(Screens[Item]->FieldsCount!=0)
+  {  
+  SelectedField=0;  
+  lcd.setCursor(Screens[Item]->Fields[0].Col-1+Screens[Item]->Fields[0].Width,Screens[Item]->Fields[0].Row);
+  lcd.blink();   
+  }
 }
-//******************************************************************
-void KBroutine_Edit()
-//******************************************************************
-{
- /*if (Buttton[BUTTON_LEFT].Value)
-    {
-    Buttton[BUTTON_LEFT].Value=false;  
-    Buttton[BUTTON_LEFT].Block=true;
-    Screen->curMenuItem--;  
-    if (Screen->curMenuItem==255)Screen->curMenuItem=Screen->Menu.ItemCount-1;
-    //lcd.setCursor(Screen->MenuItemPosition[Screen->curMenuItem][0],Screen->MenuItemPosition[Screen->curMenuItem][1]);
-    lcd.blink();    
-    }
-    if (Buttton[BUTTON_RIGHT].Value)
-    {
-    Buttton[BUTTON_RIGHT].Value=false;  
-    Buttton[BUTTON_RIGHT].Block=true;
-    Screen->curMenuItem++;  
-    //if (Screen.curMenuItem==Screen->Menu.ItemCount)Screen->curMenuItem=0;
-    //lcd.setCursor(Screen->MenuItemPosition[Screen->curMenuItem][0],Screen->MenuItemPosition[Screen->curMenuItem][1]);
-    lcd.blink();    
-    }
-    if (Buttton[BUTTON_ESC].Value)
-    {
-    Buttton[BUTTON_ESC].Value=false;  
-    Buttton[BUTTON_ESC].Block=true;
-    if (Screen->PreviousScreen!=0)
-      CreateScreen(Screen->PreviousScreen);
-    }
-    if (Buttton[BUTTON_ENTER].Value)
-    {
-    Buttton[BUTTON_ENTER].Value=false;  
-    Buttton[BUTTON_ENTER].Block=true;        
-    }*/
-}
-
-
-
-/*
-Pointers to Functions. http://mypractic.com/lesson-15-pointers-in-c-for-arduino-conversion-of-different-data-types-to-bytes/
-
-*/
+MyScreenManager ScreenManager;

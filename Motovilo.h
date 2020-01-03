@@ -3,32 +3,34 @@
 #include <LiquidCrystal.h>
 //#include "LiquidCrystalRus.h"
 
-#include "debug.h" 
-#include <MyDebug.h>
+//#include "debug.h" 
+//#include <MyDebug.h>
 #include "config.h"
 
 LiquidCrystal lcd(LCD_RS,LCD_E,LCD_D4,LCD_D5,LCD_D6,LCD_D7);
 //
 // Digital Input
 //
-struct myButttonPin {
-  byte Pin; 
-  const String  Name;
+struct myKB {
+  const byte Pin;  
+  const byte Id; 
   bool Block; //Если значение заблокировано, то не смотря на поступающие данные поле Value остается неизменным
   bool Value;
   bool Raw;
   };  
-#define BUTTON_PIN_COUNT 4
-#define BUTTON_LEFT   0
-#define BUTTON_RIGHT  1
-#define BUTTON_ESC    2
-#define BUTTON_ENTER  3
-myButttonPin Buttton[]={
-{PIN_BUTTON_LEFT,"LEFT",true,false,true},
-{PIN_BUTTON_RIGHT,"RIGHT",true,false,true},
-{PIN_BUTTON_ESC,"ESC",true,false,true},
-{PIN_BUTTON_ENTER,"ENTER",true,false,true}
+#define KB_COUNT 4
+#define KEY_LEFT   0
+#define KEY_RIGHT  1
+#define KEY_ESC    2
+#define KEY_ENTER  3
+myKB Keys[]={
+{PIN_BUTTON_LEFT,KEY_LEFT,true,false,true},
+{PIN_BUTTON_RIGHT,KEY_RIGHT,true,false,true},
+{PIN_BUTTON_ESC,KEY_ESC,true,false,true},
+{PIN_BUTTON_ENTER,KEY_ENTER,true,false,true}
 };
+short KeyPressed=-1;
+
 //***********************************************************
 lcd_print_center(int Row,String Text){ 
 //***********************************************************
@@ -44,7 +46,7 @@ lcd.print(Text);
 // Variable
 //
 
-class MyProfile
+struct MyProfile
 {  
   public:
   String  Name;
@@ -55,8 +57,8 @@ class MyProfile
   float PulseVoltageLow;
   byte PulseDuty;  
   };  
-MyProfile Profile1;
-MyProfile *Profile = &Profile1;
+MyProfile Profile;
+//MyProfile *Profile = &Profile1;
 
 
 #include "myScreen.h"
