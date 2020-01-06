@@ -63,3 +63,33 @@ MyProfile Profile;
 
 #include "myScreen.h"
 #include "ScreenAdjustment.h"
+
+
+
+/*
+// HW Info
+#define Vref 1100
+int mvVcc;
+ADMUX = 1<<REFS0 | 0x0E;
+ADCSRA = (1<<ADEN) | (1<<ADATE) | (1<<ADSC) | 5;
+delay(1);
+mvVcc = (1023L * Vref) / ADC;
+lcd.setCursor(0,0);
+lcd.print("VCC = ");
+lcd.print(mvVcc);
+lcd.print(" mV");
+
+unsigned long ustime1, ustime2;
+int i, mhzFreq, iMax = 10000;
+lcd.setCursor(0,1);
+lcd.print("F_CPU=");
+lcd.println(F_CPU);
+ustime1 = micros();
+for(i=iMax; i>0; i--) __asm__("nop\n\t");
+ustime2 = micros();
+mhzFreq = 5 * (long)iMax / (ustime2 - ustime1) + 1;
+lcd.setCursor(0,2);
+lcd.print("Freq = ");
+lcd.print(mhzFreq);
+lcd.println(" MHz");
+*/

@@ -1,6 +1,6 @@
 #define NAMESPACE ScreenAdjustment
 #define SCREENROW1  "     Adjustment     "
-#define SCREENROW2  "U-=___ V  1Km=____|L"
+#define SCREENROW2  "U-=___ V  1Km=____\xa2L"
 #define SCREENROW3  "U_=___ V  V=___Km/h "
 #define SCREENROW4  "Kd=__%              "
 
