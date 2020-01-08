@@ -52,20 +52,57 @@ else
 {
   if (SelectedByte==Field->Width)
     {
+    #ifdef _DEBUG
+    Debugln("Field->Type=%i",Field->Type);
+    #endif
     switch (Field->Type )
       {
-      case 0:
-        *(byte*)Field->Value=atoi(NewValue);
-        break;
-      case 1:
-        *(int*)Field->Value=atoi(NewValue);
-        break;
-      case 2:  
-        *(float*)Field->Value=atof(NewValue);
-        break;    
-      default:    
-        break;
+      case 0:{
+         byte bNewValue=atoi(NewValue);
+         #ifdef _DEBUG
+         Debug("NewValue=");Debugln(NewValue);
+         Debugln("bNewValue=%i",bNewValue);
+         Debugln("maxValue=%i",*(byte*)Field->maxValue);
+         Debugln("minValue=%i",*(byte*)Field->minValue);         
+         #endif
+         if (bNewValue > *(byte*)Field->maxValue)bNewValue=*(byte*)Field->maxValue;
+         else if (bNewValue < *(byte*)Field->minValue)bNewValue=*(byte*)Field->minValue;          
+         *(byte*)Field->Value=bNewValue;
+        }break;
+      case 1:{
+         int iNewValue=atoi(NewValue);
+         #ifdef _DEBUG
+         Debugln("NewValue=%s",NewValue);
+         Debugln("iNewValue=%i",iNewValue);
+         Debugln("maxValue=%i",*(int*)Field->maxValue);
+         Debugln("minValue=%i",*(int*)Field->minValue);         
+         #endif
+         if (iNewValue > *(int*)Field->maxValue)     iNewValue=*(int*)Field->maxValue;
+         else if (iNewValue < *(int*)Field->minValue)iNewValue=*(int*)Field->minValue;                  
+         *(int*)Field->Value=iNewValue;
+        }break;
+      case 2: {
+         #ifdef _DEBUG
+         Debugln("case 2");
+         #endif   
+         float fNewValue=atof(NewValue);
+         #ifdef _DEBUG
+         Debug("NewValue=");Debugln(NewValue);         
+         DebugFloat("fNewValue=%s\n",fNewValue,Field->Width,Field->Decimal);
+         DebugFloat("maxValue=%s\n",*(float*)Field->maxValue,Field->Width,Field->Decimal);         
+         DebugFloat("minValue=%s\n",*(float*)Field->minValue,Field->Width,Field->Decimal);                           
+         #endif
+         if (fNewValue > *(float*)Field->maxValue) fNewValue=*(float*)Field->maxValue;
+         else if (fNewValue < *(float*)Field->minValue)fNewValue=*(float*)Field->minValue;                  
+         *(float*)Field->Value=fNewValue;        
+        }break;    
+      default: { 
+         #ifdef _DEBUG
+         Debugln("default");
+         #endif  
+        }break;
       }       
+    GenSet();  
     Exit();
     }
   else

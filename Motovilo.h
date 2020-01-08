@@ -1,10 +1,11 @@
+#define _DEBUG 1
 #include <avr/pgmspace.h>
 //#include <EEPROM.h>
 #include <LiquidCrystal.h>
 //#include "LiquidCrystalRus.h"
 
-//#include "debug.h" 
-//#include <MyDebug.h>
+#include "debug.h" 
+#include <MyDebug.h>
 #include "config.h"
 
 LiquidCrystal lcd(LCD_RS,LCD_E,LCD_D4,LCD_D5,LCD_D6,LCD_D7);
@@ -59,7 +60,7 @@ struct MyProfile
   };  
 MyProfile Profile;
 //MyProfile *Profile = &Profile1;
-
+#include "myGen.h"
 
 #include "myScreen.h"
 #include "ScreenAdjustment.h"
@@ -79,6 +80,7 @@ lcd.print("VCC = ");
 lcd.print(mvVcc);
 lcd.print(" mV");
 
+//micros(): версия 16 МГц возвращает результат с дискретностью 4, а 8 МГц - с дискретностью 8.
 unsigned long ustime1, ustime2;
 int i, mhzFreq, iMax = 10000;
 lcd.setCursor(0,1);

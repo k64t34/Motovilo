@@ -1,6 +1,6 @@
 //******************************************************************
 struct MyField{  
-   const byte Type PROGMEM;//0-char,byte,1-int,2-Float,Double,3-String 
+   const byte Type PROGMEM;//0-char,byte,1-int,2-Float,3-String 
    const byte Col PROGMEM ;
    const byte Row PROGMEM ;
    const byte Width PROGMEM ;
@@ -9,6 +9,8 @@ struct MyField{
    const byte ActionData PROGMEM; //Action=0 => ActionData=Index Change Screen
   //char Format[8];
   const void* Value PROGMEM;   //https://www.eskimo.com/~scs/cclass/int/sx10a.html
+  const void* minValue PROGMEM;   //https://www.eskimo.com/~scs/cclass/int/sx10a.html
+  const void* maxValue PROGMEM;   //https://www.eskimo.com/~scs/cclass/int/sx10a.html
 };
 void FldStrValue(char* buff,MyField* Field)
 { 
