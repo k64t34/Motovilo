@@ -4,7 +4,6 @@
 #define SCREENROW3  "U_=___ V  V=___Km/h "
 #define SCREENROW4  "Kd=__%              "
 
-
 const byte FLD_BYTE_MINVALUE_ZERO PROGMEM =0;
 const byte FLD_BYTE_MINVALUE_ONE PROGMEM =1;
 const byte FLD_BYTE_MAXVALUE_255 PROGMEM =255;
@@ -111,6 +110,9 @@ const MyField Fields[FLD_COUNT]
 
 MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields};
 }//end namespace
+
+
+
 
 #undef SCREENROW1
 #undef SCREENROW2

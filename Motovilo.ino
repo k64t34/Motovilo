@@ -6,6 +6,18 @@ void setup(){
 Serial.begin(115200);
 Debugln("Setup...");
 #endif  
+
+//#ifdef _DEBUG_PROFILE   1
+//for ( int i=0;i!=5;i++)
+//{
+//Debug("%d\t",i);
+//Debug("%d\t",(MyField*)(ScreenManager.Screens[0]->Rows[i]).Type);
+//serial.print(Value);Debug("\t");
+//serial.print(minValueValue);Debug("\t");
+//serial.print(maxValueValue);DebugLn("\t");  
+//Rows  
+//}
+//#endif
   
 lcd.begin(LCD_COLS, LCD_ROWS);  
 /*lcd.print("5.5 V+-----+300 K/h ");

@@ -52,52 +52,55 @@ else
 {
   if (SelectedByte==Field->Width)
     {
-    #ifdef _DEBUG
+    #ifdef _DEBUG_PROFILE
     Debugln("Field->Type=%i",Field->Type);
     #endif
     switch (Field->Type )
       {
       case 0:{
-         byte bNewValue=atoi(NewValue);
-         #ifdef _DEBUG
+         byte bNewValue=atoi(NewValue);          
+         byte minValue = pgm_read_byte(Field->minValue);
+         byte maxValue = pgm_read_byte(Field->maxValue);
+         #ifdef _DEBUG_PROFILE
          Debug("NewValue=");Debugln(NewValue);
          Debugln("bNewValue=%i",bNewValue);
-         Debugln("maxValue=%i",*(byte*)Field->maxValue);
-         Debugln("minValue=%i",*(byte*)Field->minValue);         
+         Debugln("maxValue=%i",maxValue);
+         Debugln("minValue=%i",minValue);         
          #endif
-         if (bNewValue > *(byte*)Field->maxValue)bNewValue=*(byte*)Field->maxValue;
-         else if (bNewValue < *(byte*)Field->minValue)bNewValue=*(byte*)Field->minValue;          
+         if (bNewValue > maxValue)bNewValue=maxValue;
+         else if (bNewValue < minValue)bNewValue=minValue;          
          *(byte*)Field->Value=bNewValue;
         }break;
       case 1:{
          int iNewValue=atoi(NewValue);
-         #ifdef _DEBUG
+         int minValue = pgm_read_word(Field->minValue);
+         int maxValue = pgm_read_word(Field->maxValue);
+         #ifdef _DEBUG_PROFILE
          Debugln("NewValue=%s",NewValue);
          Debugln("iNewValue=%i",iNewValue);
-         Debugln("maxValue=%i",*(int*)Field->maxValue);
-         Debugln("minValue=%i",*(int*)Field->minValue);         
+         Debugln("maxValue=%i",maxValue);
+         Debugln("minValue=%i",minValue);         
          #endif
-         if (iNewValue > *(int*)Field->maxValue)     iNewValue=*(int*)Field->maxValue;
-         else if (iNewValue < *(int*)Field->minValue)iNewValue=*(int*)Field->minValue;                  
+         if (iNewValue > maxValue)     iNewValue=maxValue;
+         else if (iNewValue < minValue)iNewValue=minValue;                  
          *(int*)Field->Value=iNewValue;
         }break;
-      case 2: {
-         #ifdef _DEBUG
-         Debugln("case 2");
-         #endif   
+      case 2: {           
          float fNewValue=atof(NewValue);
-         #ifdef _DEBUG
+         float minValue = pgm_read_float(Field->minValue);
+         float maxValue = pgm_read_float(Field->maxValue);
+         #ifdef _DEBUG_PROFILE
          Debug("NewValue=");Debugln(NewValue);         
          DebugFloat("fNewValue=%s\n",fNewValue,Field->Width,Field->Decimal);
-         DebugFloat("maxValue=%s\n",*(float*)Field->maxValue,Field->Width,Field->Decimal);         
-         DebugFloat("minValue=%s\n",*(float*)Field->minValue,Field->Width,Field->Decimal);                           
+         DebugFloat("maxValue=%s\n",maxValue,Field->Width,Field->Decimal);         
+         DebugFloat("minValue=%s\n",minValue,Field->Width,Field->Decimal);                           
          #endif
-         if (fNewValue > *(float*)Field->maxValue) fNewValue=*(float*)Field->maxValue;
-         else if (fNewValue < *(float*)Field->minValue)fNewValue=*(float*)Field->minValue;                  
+         if (fNewValue > maxValue) fNewValue=maxValue;
+         else if (fNewValue < minValue)fNewValue=minValue;                  
          *(float*)Field->Value=fNewValue;        
         }break;    
       default: { 
-         #ifdef _DEBUG
+         #ifdef _DEBUG_PROFILE
          Debugln("default");
          #endif  
         }break;
