@@ -1,4 +1,4 @@
-#define DEBUG 1
+#define noDEBUG 1
 #include "Motovilo.h" 
 
 void setup(){
@@ -28,11 +28,11 @@ lcd.print("-----+     +--------");
 //
 Profile.Name="Gazelle 1\0";
 Profile.Mileage=100;
-Profile.Velocity=10;
+Profile.Velocity=50;
 Profile.Pulse1km=6000;
 Profile.PulseVoltageHigh=5.1;
 Profile.PulseVoltageLow=0.1;
-Profile.PulseDuty=10;
+Profile.PulseDuty=50;
 #ifdef _DEBUG
 Debugln("Profile.Name=%s",Profile.Name);
 Debugln("Profile.Mileage=%d",Profile.Mileage);

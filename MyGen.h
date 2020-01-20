@@ -1,5 +1,4 @@
-#define GEN_PIN 15
-#define GEN_LED_PIN A0
+
 
 #define MAX_UnsignedLong 4294967295
 
@@ -41,13 +40,13 @@ Debugln("GenStop");
 #endif
 gEnable=false;
 g_ImpulsePhase=LOW;
-digitalWrite(GEN_LED_PIN, LOW);
+digitalWrite(GEN_PIN, LOW);
 }
 //******************************************************************  
 void GenTimerInit(){
 //******************************************************************    
 pinMode(GEN_PIN, OUTPUT);
-pinMode(GEN_LED_PIN, OUTPUT);
+//pinMode(GEN_LED_PIN, OUTPUT);
 //Set timer2
 //- остановка таймера,
 TCCR2A = 0;
@@ -97,7 +96,7 @@ if (gEnable)
       {
       g_ImpulsePhase=LOW;  
       g_InterruptCounter=0;
-      digitalWrite(GEN_LED_PIN, LOW);  
+      digitalWrite(GEN_PIN, LOW);  
       }
     }
   else
@@ -110,7 +109,7 @@ if (gEnable)
       if (g_ImpulseCounter==0)
         GenStop();
       else
-        digitalWrite(GEN_LED_PIN, HIGH);        
+        digitalWrite(GEN_PIN, HIGH);        
       }
     }
   }

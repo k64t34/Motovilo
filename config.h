@@ -13,7 +13,10 @@
 #define LCD_COLS  20
 #define LCD_ROWS  4
 //Buttons
-#define PIN_BUTTON_LEFT   15
-#define PIN_BUTTON_RIGHT  16
-#define PIN_BUTTON_ESC    17
-#define PIN_BUTTON_ENTER  18
+#define PIN_BUTTON_LEFT   A1
+#define PIN_BUTTON_RIGHT  A2
+#define PIN_BUTTON_ESC    A3
+#define PIN_BUTTON_ENTER  A4
+
+#define GEN_PIN A0
+//#define GEN_LED_PIN A0
