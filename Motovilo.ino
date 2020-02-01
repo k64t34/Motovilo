@@ -1,4 +1,4 @@
-#define noDEBUG 1
+#define DEBUG 1
 #include "Motovilo.h" 
 
 void setup(){
