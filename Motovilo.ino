@@ -18,12 +18,32 @@ Debugln("Setup...");
 //Rows  
 //}
 //#endif
-  
+kpd.begin(); 
 lcd.begin(LCD_COLS, LCD_ROWS);  
-/*lcd.print("5.5 V+-----+300 K/h ");
-lcd.print("0.1 V|     |        ");    
-lcd.print("     | 15% |6000/1km");
-lcd.print("-----+     +--------");   
+lcd.clear();
+char* adr= (char*)strBoot;
+for (byte r=0;r!=LCD_ROWS;r++)
+  {
+  lcd.setCursor(0, r);  
+  for (byte c = 0; c != LCD_COLS; c++)
+    {
+      lcd.write(pgm_read_byte_near(adr));
+      adr++;
+    }
+  delay(1000);  
+  } 
+lcd.noDisplay();
+delay(500);    
+lcd.display();
+delay(1000);
+lcd.noDisplay();
+delay(500);    
+lcd.display();
+delay(1000);
+lcd.noDisplay();
+delay(500);    
+lcd.display();
+delay(1000);
 //delay(10000);*/
 //
 Profile.Name="Gazelle 1\0";
@@ -43,8 +63,6 @@ DebugFloat("Profile.PulseVoltageLow=%s\n",Profile.PulseVoltageLow,3,1);
 Debugln("Profile.PulseDuty=%d",Profile.PulseDuty);
 #endif 
   
-for (byte i=0;i!=KB_COUNT;i++) pinMode(Keys[i].Pin,INPUT_PULLUP);  
-for (byte i=0;i!=KB_COUNT;i++)Keys[i].Block=false; 
 ScreenManager.Screens[0]=&(ScreenAdjustment::Screen);           
   
 #ifdef  _DEBUG_GEN
@@ -54,11 +72,16 @@ ScreenManager.Show(0);
 #endif
 GenTimerInit();
 GenSet();
+
 }
 
 //******************************************************************
 void loop(){
 //******************************************************************  
+key = kpd.getKey();  
+if (key)ScreenManager.Loop(key);
+ 
+  
 #ifdef  _DEBUG_GEN_CALC   
 lcd.setCursor(0,0);
 //lcd.print(g_InterruptCounter);
@@ -93,26 +116,7 @@ lcd.print("irq/msec=");
 lcd.print(((double)(dInterruptCounter-lastdInterruptCounter)/dtime)*(double)1000.0);
 lastdInterruptCounter = dInterruptCounter;
 #endif
-KeyPressed=-1;
-for (byte i=0;i!=KB_COUNT;i++)
-  {
-  Keys[i].Raw=digitalRead(Keys[i].Pin);
-  if (Keys[i].Block)
-    {
-      if (Keys[i].Raw==HIGH)
-        Keys[i].Block=false;
-    }
-  else if (Keys[i].Raw==LOW)
-    {    
-    Keys[i].Value=true;
-    KeyPressed=Keys[i].Id;
-    Keys[i].Value=false;  
-    Keys[i].Block=true;
-    break;
-    }  
-  } 
-if (KeyPressed>=0)  ScreenManager.Loop(KeyPressed);  
-//time = millis();
+
 delay(50);
 }
 

@@ -51,7 +51,7 @@ class MyScreenManager{
   const MyScreen *Screens[MAX_SCREENS] PROGMEM;  
   //void Add(MyScreen *Screen);
   void Show(int Item);
-  void Loop(short);
+  void Loop(char);
   inline void GotoNextField(void);
   inline void GotoPreviousField(void);
   void ActField(void);  
@@ -73,11 +73,13 @@ SelectedField--;
 if (SelectedField==255)SelectedField=Screens[current]->FieldsCount-1;
 lcd.setCursor(Screens[current]->Fields[SelectedField].Col-1+Screens[current]->Fields[SelectedField].Width,Screens[current]->Fields[SelectedField].Row);
 }
-void MyScreenManager::Loop(short Key){
+
+
+void MyScreenManager::Loop(char Key){
 if (EditField.EditMode) EditField.Loop(Key);
-else
-if (Key==KEY_RIGHT)     GotoNextField();
-else if (Key==KEY_LEFT) GotoPreviousField(); 
+else  
+if (Key==KEY_RIGHT || Key==KEY_DOWN)     GotoNextField();
+else if (Key==KEY_LEFT || Key==KEY_UP) GotoPreviousField(); 
 else if (Key==KEY_ENTER)ActField();
 else if (Key==KEY_ESC) ;
 }    

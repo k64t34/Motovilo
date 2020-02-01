@@ -1,10 +1,8 @@
-#define NAMESPACE ScreenAdjustment
-#define SCREENROW1  "     Adjustment     "
-#define SCREENROW2  "U-=___ V  1Km=____\xa2L"
-#define SCREENROW3  "U_=___ V  V=___Km/h "
-#define SCREENROW4  "Kd=__%              "
-
-
+#define NAMESPACE Choose_action
+#define SCREENROW1  "  Choose an action  "
+#define SCREENROW2  " 1.RUN              "
+#define SCREENROW3  " 2.Setup            "
+#define SCREENROW4  "GAZelle/200kph/500km"
 
 //struct MyField{  
 //   byte Type ;//0-char,byte,1-int,2-Float,Double,3-String 
@@ -12,28 +10,28 @@
 //   byte Row ;
 //   byte Width ;
 //   byte Decimal;
-//   byte Action ; //0-Change Screen, 1-Edit
+//   byte Action ;  //0-noAct, 1-Change Screen, 2-Edit
 //   byte ActionData PROGMEM; //Action=0 => ActionData=Index Change Screen
 //  //char Format[8];
 //  void* Value;   
 //  void* minValue 
 //  void* maxValue 
 //};  
-#define FLD_COUNT 5
+#define FLD_COUNT 2
 
-#define FLD1_TYPE 2  
-#define FLD1_COL  3
+#define FLD1_TYPE 0  
+#define FLD1_COL  0
 #define FLD1_ROW  1
-#define FLD1_WIDTH  3
-#define FLD1_DECIMAL  1
-#define FLD1_ACTION   2
+#define FLD1_WIDTH  1
+#define FLD1_DECIMAL  0
+#define FLD1_ACTION   1
 #define FLD1_ACTIONDATA 0
 #define FLD1_VALUE   &Profile.PulseVoltageHigh 
 #define FLD1_MINVALUE &FLD_FLOAT_MINVALUE_5 
 #define FLD1_MAXVALUE &FLD_FLOAT_MAXVALUE_9 
 
 #define FLD2_TYPE 2  
-#define FLD2_COL  3
+#define FLD2_COL  0
 #define FLD2_ROW  2
 #define FLD2_WIDTH  3
 #define FLD2_DECIMAL  1

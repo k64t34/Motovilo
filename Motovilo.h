@@ -4,33 +4,39 @@
 #include <LiquidCrystal.h>
 //#include "LiquidCrystalRus.h"
 
+
 #include "debug.h" 
 #include <MyDebug.h>
 #include "config.h"
 
 LiquidCrystal lcd(LCD_RS,LCD_E,LCD_D4,LCD_D5,LCD_D6,LCD_D7);
-//
-// Digital Input
-//
-struct myKB {
-  const byte Pin;  
-  const byte Id; 
-  bool Block; //Если значение заблокировано, то не смотря на поступающие данные поле Value остается неизменным
-  bool Value;
-  bool Raw;
-  };  
-#define KB_COUNT 4
-#define KEY_LEFT   0
-#define KEY_RIGHT  1
-#define KEY_ESC    2
-#define KEY_ENTER  3
-myKB Keys[]={
-{PIN_BUTTON_LEFT,KEY_LEFT,true,false,true},
-{PIN_BUTTON_RIGHT,KEY_RIGHT,true,false,true},
-{PIN_BUTTON_ESC,KEY_ESC,true,false,true},
-{PIN_BUTTON_ENTER,KEY_ENTER,true,false,true}
+
+// Keypad
+#include <Keypad_I2C.h> //https://github.com/joeyoung/arduino_keypads/tree/master/Keypad_I2C
+#define KP_ROWS  4
+#define KP_COLS  4
+const char KP_KEYS[KP_ROWS][KP_COLS] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
 };
-short KeyPressed=-1;
+//Use this array if the cable is connected directly.
+//const byte I2Cpin_rows[KP_ROWS] = {0, 1, 2, 3}; //connect to the row pinouts of the keypad
+//const byte I2Cpin_cols[KP_COLS] = {4, 5, 6, 7}; //connect to the column pinouts of the keypad
+//Use this array if the cable is connected rotated 180
+const byte I2Cpin_rows[KP_ROWS] = {7, 6, 5, 4}; //connect to the row pinouts of the keypad
+const byte I2Cpin_cols[KP_COLS] = {3, 2, 1, 0}; //connect to the column pinouts of the keypad
+
+#define I2CAddress  0x20
+Keypad_I2C kpd = Keypad_I2C( makeKeymap(KP_KEYS),  
+  I2Cpin_rows, 
+  I2Cpin_cols, 
+  KP_ROWS, 
+  KP_COLS,
+  I2CAddress,
+  PCF8574);
+char key; // Pressed key in loop
 
 //***********************************************************
 lcd_print_center(int Row,String Text){ 
@@ -63,9 +69,15 @@ MyProfile Profile;
 #include "myGen.h"
 
 #include "myScreen.h"
+//#include "Choose_action.h"
 #include "ScreenAdjustment.h"
 
-
+const char strBoot[LCD_ROWS][LCD_COLS] PROGMEM =
+{
+"  L O A D I N G ... ",
+" Crankshaft sensor  ",
+" TESTER   ver 0102  ",
+"   (c) Bosch 2020   "};
 
 /*
 // HW Info
