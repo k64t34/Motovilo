@@ -6,7 +6,6 @@ void setup(){
 Serial.begin(115200);
 Debugln("Setup...");
 #endif  
-
 //#ifdef _DEBUG_PROFILE   1
 //for ( int i=0;i!=5;i++)
 //{
@@ -21,6 +20,7 @@ Debugln("Setup...");
 kpd.begin(); 
 lcd.begin(LCD_COLS, LCD_ROWS);  
 lcd.clear();
+#ifndef _DEBUG
 char* adr= (char*)strBoot;
 for (byte r=0;r!=LCD_ROWS;r++)
   {
@@ -44,7 +44,7 @@ lcd.noDisplay();
 delay(500);    
 lcd.display();
 delay(1000);
-//delay(10000);*/
+#endif
 //
 Profile.Name="Gazelle 1\0";
 Profile.Mileage=100;
@@ -62,8 +62,8 @@ DebugFloat("Profile.PulseVoltageHigh=%s\n",Profile.PulseVoltageHigh,3,1);
 DebugFloat("Profile.PulseVoltageLow=%s\n",Profile.PulseVoltageLow,3,1);
 Debugln("Profile.PulseDuty=%d",Profile.PulseDuty);
 #endif 
-  
-ScreenManager.Screens[0]=&(ScreenAdjustment::Screen);           
+ScreenManager.Screens[Choose_actionIndex]=&(Choose_action::Screen);           
+ScreenManager.Screens[ScreenAdjustmentIndex]=&(ScreenAdjustment::Screen);           
   
 #ifdef  _DEBUG_GEN
 cur_time=millis();
@@ -72,9 +72,7 @@ ScreenManager.Show(0);
 #endif
 GenTimerInit();
 GenSet();
-
 }
-
 //******************************************************************
 void loop(){
 //******************************************************************  

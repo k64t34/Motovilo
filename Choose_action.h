@@ -1,7 +1,8 @@
+#define Choose_actionIndex 0
 #define NAMESPACE Choose_action
 #define SCREENROW1  "  Choose an action  "
-#define SCREENROW2  " 1.RUN              "
-#define SCREENROW3  " 2.Setup            "
+#define SCREENROW2  " .START             "
+#define SCREENROW3  " .SETUP             "
 #define SCREENROW4  "GAZelle/200kph/500km"
 
 //struct MyField{  
@@ -18,28 +19,28 @@
 //  void* maxValue 
 //};  
 #define FLD_COUNT 2
-
+//1
 #define FLD1_TYPE 0  
 #define FLD1_COL  0
 #define FLD1_ROW  1
 #define FLD1_WIDTH  1
 #define FLD1_DECIMAL  0
-#define FLD1_ACTION   1
+#define FLD1_ACTION   0
 #define FLD1_ACTIONDATA 0
-#define FLD1_VALUE   &Profile.PulseVoltageHigh 
-#define FLD1_MINVALUE &FLD_FLOAT_MINVALUE_5 
-#define FLD1_MAXVALUE &FLD_FLOAT_MAXVALUE_9 
-
-#define FLD2_TYPE 2  
+#define FLD1_VALUE   &FLD_CHAR_1 
+#define FLD1_MINVALUE 0
+#define FLD1_MAXVALUE 0
+//2
+#define FLD2_TYPE 0  
 #define FLD2_COL  0
 #define FLD2_ROW  2
-#define FLD2_WIDTH  3
-#define FLD2_DECIMAL  1
-#define FLD2_ACTION   2
-#define FLD2_ACTIONDATA 0
-#define FLD2_VALUE   &Profile.PulseVoltageLow 
-#define FLD2_MINVALUE &FLD_FLOAT_MINVALUE_ZERO 
-#define FLD2_MAXVALUE &FLD_FLOAT_MAXVALUE_1 
+#define FLD2_WIDTH  1
+#define FLD2_DECIMAL  0
+#define FLD2_ACTION   1
+#define FLD2_ACTIONDATA ScreenAdjustmentIndex
+#define FLD2_VALUE   &FLD_CHAR_2
+#define FLD2_MINVALUE 0
+#define FLD2_MAXVALUE 0
 
 #define FLD3_TYPE 0  
 #define FLD3_COL  3
@@ -96,11 +97,8 @@ const MyField Fields[FLD_COUNT]
 #endif
 ;
 
-MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields};
+MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields,.KB_mode=KB_MODE_DIGIT};
 }//end namespace
-
-
-
 
 #undef SCREENROW1
 #undef SCREENROW2

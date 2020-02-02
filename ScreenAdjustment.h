@@ -1,11 +1,9 @@
+#define ScreenAdjustmentIndex 1
 #define NAMESPACE ScreenAdjustment
 #define SCREENROW1  "     Adjustment     "
 #define SCREENROW2  "U-=___ V  1Km=____\xa2L"
 #define SCREENROW3  "U_=___ V  V=___Km/h "
 #define SCREENROW4  "Kd=__%              "
-
-
-
 //struct MyField{  
 //   byte Type ;//0-char,byte,1-int,2-Float,Double,3-String 
 //   byte Col ;
@@ -98,11 +96,8 @@ const MyField Fields[FLD_COUNT]
 #endif
 ;
 
-MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields};
+MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields,.KB_mode=KB_MODE_ARROW};
 }//end namespace
-
-
-
 
 #undef SCREENROW1
 #undef SCREENROW2

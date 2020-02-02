@@ -69,8 +69,9 @@ MyProfile Profile;
 #include "myGen.h"
 
 #include "myScreen.h"
-//#include "Choose_action.h"
 #include "ScreenAdjustment.h"
+#include "Choose_action.h"
+
 
 const char strBoot[LCD_ROWS][LCD_COLS] PROGMEM =
 {

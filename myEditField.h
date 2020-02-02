@@ -2,6 +2,9 @@ const byte FLD_BYTE_MINVALUE_ZERO PROGMEM =0;
 const byte FLD_BYTE_MINVALUE_ONE PROGMEM =1;
 const byte FLD_BYTE_MAXVALUE_255 PROGMEM =255;
 const byte FLD_BYTE_MAXVALUE_99 PROGMEM =99;
+const char FLD_CHAR_1  ='1';
+const char FLD_CHAR_2  ='2';
+const char FLD_CHAR_3  ='3';
 const float FLD_FLOAT_MINVALUE_ZERO PROGMEM =0.0;
 const float FLD_FLOAT_MAXVALUE_1 PROGMEM =1.0;
 const float FLD_FLOAT_MINVALUE_5 PROGMEM =5.0;
@@ -144,10 +147,13 @@ else
 }     
 }//************************************
 void MyEditFieldInt::SetValue(char Key){
-NewValue[SelectedByte]=Key;
-lcd.write(NewValue[SelectedByte]);
-lcd.setCursor(Field->Col+SelectedByte,Field->Row);
-Save();
+if (Key<='9')
+  {
+  NewValue[SelectedByte]=Key;
+  lcd.write(NewValue[SelectedByte]);
+  lcd.setCursor(Field->Col+SelectedByte,Field->Row);
+  Save();
+  }
 }//************************************
 void MyEditFieldInt::IncreaseValue(void){
 if (NewValue[SelectedByte]=='9')NewValue[SelectedByte]='0';

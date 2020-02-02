@@ -1,5 +1,3 @@
-
-
 #define MAX_UnsignedLong 4294967295
 
 #ifdef  _DEBUG_GEN

@@ -12,5 +12,10 @@
 #define LCD_D7  2
 #define LCD_COLS  20
 #define LCD_ROWS  4
-
+//I2C Keypad
+#define I2C_SDA  A4
+#define I2C_SCL  A5
+//Gen
 #define GEN_PIN A0
+//Voltage measurement
+#define MEASUREMENT_PIN A6
