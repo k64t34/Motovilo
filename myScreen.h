@@ -41,7 +41,7 @@ struct MyScreen{
   const byte FieldsCount;
   const MyField* Fields;  
   const byte KB_mode;//0 - arrow; 1- digit    
-  /*byte PreviousScreen;*/
+  byte PreviousScreen;
   };
 #define KB_MODE_ARROW 0
 #define KB_MODE_DIGIT 1  
@@ -52,7 +52,7 @@ class MyScreenManager{
   byte current=-1;
   byte SelectedField;
   const MyScreen *Screens[MAX_SCREENS] PROGMEM;  
-  byte PreviousScreen[MAX_SCREENS];
+  //byte PreviousScreen[MAX_SCREENS];
   //void Add(MyScreen *Screen);
   void Show(int Item);
   void Loop(char);
@@ -89,15 +89,14 @@ else if (Screens[current]->KB_mode==KB_MODE_ARROW)
   if (Key==KEY_RIGHT || Key==KEY_DOWN)   GotoNextField();
   else if (Key==KEY_LEFT || Key==KEY_UP) GotoPreviousField(); 
   else if (Key==KEY_ENTER)ActField();
-  else if (Key==KEY_ESC)Show(PreviousScreen[current]);
+  else if (Key==KEY_ESC)Show(Screens[current]->PreviousScreen);
   }
 else if (Screens[current]->KB_mode==KB_MODE_DIGIT) 
   {
   if ('1' <= Key && Key <= '9') GotoField(Key);
   else if (Key=='#') 
     {
-      
-      PreviousScreen[Screens[current]->Fields[SelectedField].ActionData]=current;
+      ((MyScreen*)Screens[Screens[current]->Fields[SelectedField].ActionData])->PreviousScreen=current;
       Show(Screens[current]->Fields[SelectedField].ActionData);   
     }
   }
