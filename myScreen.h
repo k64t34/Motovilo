@@ -17,9 +17,8 @@ void FldStrValue(char* buff,MyField* Field)
 char Format[8];   
 switch (Field->Type )
   {
-  case 0:    
-    //sprintf(Format,"%%%uu",Field->Width);  //http://www.c-cpp.ru/content/printf
-    sprintf(buff,"%c",*(char*)Field->Value);    
+  case 0:          
+    sprintf(buff,"%c",*(char*)Field->Value);//http://www.c-cpp.ru/content/printf
     break;
   case 1:
     sprintf(Format,"%%%uu",Field->Width);  
@@ -29,6 +28,10 @@ switch (Field->Type )
     //dtostrf(floatVar, minStringWidthIncDecimalPoint, numVarsAfterDecimal, charBuf);
     dtostrf(*(float*)Field->Value, Field->Width, Field->Decimal, buff);    
     break;    
+  case 4:  
+    sprintf(Format,"%%%uu",Field->Width);
+    sprintf(buff,Format,*(byte*)Field->Value);    
+    break;     
   default:
     sprintf(buff,"%s",*(byte*)Field->Value);
     break;

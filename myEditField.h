@@ -131,6 +131,20 @@ else
          else if (fNewValue < minValue)fNewValue=minValue;                  
          *(float*)Field->Value=fNewValue;        
         }break;    
+      case 4: {           
+         int bNewValue=atoi(NewValue);          
+         byte minValue = pgm_read_byte(Field->minValue);
+         byte maxValue = pgm_read_byte(Field->maxValue);
+         #ifdef _DEBUG_PROFILE
+         Debug("NewValue=");Debugln(NewValue);
+         Debugln("bNewValue=%i",bNewValue);
+         Debugln("maxValue=%i",maxValue);
+         Debugln("minValue=%i",minValue);         
+         #endif
+         if (bNewValue > maxValue)bNewValue=maxValue;
+         else if (bNewValue < minValue)bNewValue=minValue;          
+         *(byte*)Field->Value=bNewValue;
+        }break;  
       default: { 
          #ifdef _DEBUG_PROFILE
          Debugln("default");

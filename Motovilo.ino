@@ -46,7 +46,7 @@ lcd.display();
 delay(1000);
 #endif
 //
-Profile.Name="Gazelle 1\0";
+Profile.Name="Gazelle1";
 Profile.Mileage=100;
 Profile.Velocity=50;
 Profile.Pulse1km=6000;

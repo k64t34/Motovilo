@@ -5,7 +5,7 @@
 #define SCREENROW3  "U_=___ V  V=___Km/h "
 #define SCREENROW4  "Kd=__%              "
 //struct MyField{  
-//   byte Type ;//0-char,byte,1-int,2-Float,Double,3-String 
+//   byte Type ;//0-char,1-int,2-Float,Double,3-String,4-byte 
 //   byte Col ;
 //   byte Row ;
 //   byte Width ;
@@ -41,7 +41,7 @@
 #define FLD2_MINVALUE &FLD_FLOAT_MINVALUE_ZERO 
 #define FLD2_MAXVALUE &FLD_FLOAT_MAXVALUE_1 
 
-#define FLD3_TYPE 0  
+#define FLD3_TYPE 4  
 #define FLD3_COL  3
 #define FLD3_ROW  3
 #define FLD3_WIDTH  2
@@ -63,7 +63,7 @@
 #define FLD4_MINVALUE &FLD_INT_MINVALUE_ONE 
 #define FLD4_MAXVALUE &FLD_INT_MAXVALUE_10000 
 
-#define FLD5_TYPE 0  
+#define FLD5_TYPE 4  
 #define FLD5_COL  12
 #define FLD5_ROW  2
 #define FLD5_WIDTH  3
