@@ -10,7 +10,7 @@ unsigned long lastdInterruptCounter=0;
 #endif
 
 // Gen
-const unsigned long g_Fclk=15104000; //16MHz
+const unsigned long g_Fclk=15104000; //Частота процессора 16MHz
 const int g_timerPrescale = 8;// 1024/256/64/8/1  - prescale value
 //const byte g_timerOCR =255;//Output compare register
 bool gEnable=false; //вкл/выкл генерацию
@@ -21,6 +21,7 @@ volatile bool g_ImpulsePhase=LOW;// 1- время высокого, 0 -врем�
 volatile unsigned long g_InterruptCounter; // Счетчик прерываний
 volatile unsigned long g_ImpulseCounter=MAX_UnsignedLong;// Счетчик импульсов
 float FtIC=59000.0; //Частота появления прерываний таймера
+
 //******************************************************************
 inline void GenStart(){
 //******************************************************************  
@@ -63,11 +64,11 @@ GTCCR|=(1<<PSRASY); //Reset Prescaler. В о з можно это и не нуж
 void GenSet(){
 //******************************************************************  
 GenStop();
-FtIC=(float)g_Fclk / 256.0;
+FtIC=(float)g_Fclk / 256.0;//Частота появления прерываний таймера
 unsigned int TintCount=ceil(3600.0 * FtIC / (float)Profile.Velocity / (float)Profile.Pulse1km);
 g_timerIntCntH=ceil( (float)((unsigned long)TintCount * (unsigned long)Profile.PulseDuty) / 100.0    ) ;
 if (TintCount>g_timerIntCntH) g_timerIntCntL=TintCount-g_timerIntCntH;else g_timerIntCntL=1;
-g_ImpulseCounter=Profile.Mileage * Profile.Pulse1km;
+g_ImpulseCounter=Profile.Mileage * Profile.Pulse1km;// Счетчик импульсов
 #ifdef _DEBUG_GEN_CALC
 DebugFloat("FtIC=%s\n",FtIC,10,1);
 Debugln("----");

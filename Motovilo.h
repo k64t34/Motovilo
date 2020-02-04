@@ -71,6 +71,8 @@ MyProfile Profile;
 #include "myScreen.h"
 #include "ScreenAdjustment.h"
 #include "Choose_action.h"
+#include "Movement.h"
+ 
 
 
 const char strBoot[LCD_ROWS][LCD_COLS] PROGMEM =
