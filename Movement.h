@@ -1,9 +1,10 @@
-#define MovementIndex 0
+#define MovementIndex 2
 #define NAMESPACE Movement
-#define SCREENROW1  "      Movement      "
+#define SCREENROW1  "     Movement       "
 #define SCREENROW2  "|                   "
 #define SCREENROW3  "rest 99:59 of 99:59 "
 #define SCREENROW4  "GAZelle/200kph/500km"
+
 //struct MyField{  
 //   byte Type ;//0-char,byte,1-int,2-Float,Double,3-String 
 //   byte Col ;
@@ -17,12 +18,12 @@
 //  void* minValue 
 //  void* maxValue 
 //};  
-#define FLD_COUNT 2
+#define FLD_COUNT 1
 //1
-#define FLD1_TYPE 3  
-#define FLD1_COL  0
-#define FLD1_ROW  1
-#define FLD1_WIDTH  1
+#define FLD1_TYPE 0  
+#define FLD1_COL  5
+#define FLD1_ROW  2
+#define FLD1_WIDTH  2
 #define FLD1_DECIMAL  0
 #define FLD1_ACTION   0
 #define FLD1_ACTIONDATA 0
@@ -31,12 +32,12 @@
 #define FLD1_MAXVALUE 0
 //2
 #define FLD2_TYPE 0  
-#define FLD2_COL  0
+#define FLD2_COL  5
 #define FLD2_ROW  2
 #define FLD2_WIDTH  1
 #define FLD2_DECIMAL  0
 #define FLD2_ACTION   1
-#define FLD2_ACTIONDATA ScreenAdjustmentIndex
+#define FLD2_ACTIONDATA 0
 #define FLD2_VALUE   &FLD_CHAR_2
 #define FLD2_MINVALUE 0
 #define FLD2_MAXVALUE 0
@@ -96,7 +97,12 @@ const MyField Fields[FLD_COUNT]
 #endif
 ;
 
-MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields,.KB_mode=KB_MODE_DIGIT};
+MyScreen Screen = {
+  .Rows=(char*)Rows,
+  .FieldsCount=FLD_COUNT,
+  .Fields=Fields,
+  .KB_mode=KB_MODE_DIGIT,  
+  };
 }//end namespace
 
 #undef SCREENROW1
@@ -160,3 +166,19 @@ MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields,.KB_m
 #undef FLD5_ACTIONDATA 
 #undef FLD5_MINVALUE 
 #undef FLD5_MAXVALUE 
+
+byte lastCharPosInProgressbar=255;
+
+void Movement_Loop(){
+if (lastCharPosInProgressbar!=CharPosInProgressbar)
+  {
+  lcd.setCursor(CharPosInProgressbar,1);
+  lcd.write(255);
+  lastCharPosInProgressbar=CharPosInProgressbar;
+  }
+}
+void Movement_Close(){
+//GenStop();
+lcd.setCursor(0,3);
+lcd.write('   F I N I S H   ');
+}

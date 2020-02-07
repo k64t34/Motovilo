@@ -26,7 +26,7 @@
 #define FLD1_WIDTH  1
 #define FLD1_DECIMAL  0
 #define FLD1_ACTION   0
-#define FLD1_ACTIONDATA 0
+#define FLD1_ACTIONDATA MovementIndex
 #define FLD1_VALUE   &FLD_CHAR_1 
 #define FLD1_MINVALUE 0
 #define FLD1_MAXVALUE 0

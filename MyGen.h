@@ -1,5 +1,4 @@
 #define MAX_UnsignedLong 4294967295
-
 #ifdef  _DEBUG_GEN
 byte c_pos=0;
 byte r_pos=0;
@@ -8,7 +7,6 @@ unsigned long cur_time=1;
 volatile unsigned long dInterruptCounter=0;
 unsigned long lastdInterruptCounter=0;
 #endif
-
 // Gen
 const unsigned long g_Fclk=15104000; //Частота процессора 16MHz
 const int g_timerPrescale = 8;// 1024/256/64/8/1  - prescale value
@@ -21,7 +19,19 @@ volatile bool g_ImpulsePhase=LOW;// 1- время высокого, 0 -врем�
 volatile unsigned long g_InterruptCounter; // Счетчик прерываний
 volatile unsigned long g_ImpulseCounter=MAX_UnsignedLong;// Счетчик импульсов
 float FtIC=59000.0; //Частота появления прерываний таймера
-
+//Progressbar
+unsigned int NImpPcharProgressbar;
+volatile unsigned int CImpPcharProgressbar;
+volatile byte CharPosInProgressbar;
+byte NcharProgressbar; // Char postion in progressbar
+//Progress time
+const int T_loopdelay=50;//number of milliseconds of delay in the loop
+int C_loops1min=ceil(60000.0/T_loopdelay);//number of loops to complete one minute
+int C_loops1min_downcounter;
+unsigned long NextMillisCheckProgress;
+unsigned long Millis_start;
+byte HH_trevel,MM_trevel;
+byte HH_left,MM_left;
 //******************************************************************
 inline void GenStart(){
 //******************************************************************  
@@ -29,6 +39,10 @@ inline void GenStart(){
 Debugln("GenStart");
 #endif
 g_InterruptCounter=0;
+CImpPcharProgressbar=NImpPcharProgressbar;
+Millis_start=millis();
+C_loops1min_downcounter=C_loops1min;
+NextMillisCheckProgress=millis()+Period_Refresh;
 gEnable=true;
 }
 //******************************************************************  
@@ -65,10 +79,20 @@ void GenSet(){
 //******************************************************************  
 GenStop();
 FtIC=(float)g_Fclk / 256.0;//Частота появления прерываний таймера
-unsigned int TintCount=ceil(3600.0 * FtIC / (float)Profile.Velocity / (float)Profile.Pulse1km);
+unsigned int TintCount=ceil(3600.0 * FtIC / (float)Profile.Velocity / (float)Profile.Pulse1km);//количество прерываний для верхнего уровня импульса
 g_timerIntCntH=ceil( (float)((unsigned long)TintCount * (unsigned long)Profile.PulseDuty) / 100.0    ) ;
-if (TintCount>g_timerIntCntH) g_timerIntCntL=TintCount-g_timerIntCntH;else g_timerIntCntL=1;
-g_ImpulseCounter=Profile.Mileage * Profile.Pulse1km;// Счетчик импульсов
+if (TintCount>g_timerIntCntH) g_timerIntCntL=TintCount-g_timerIntCntH;else g_timerIntCntL=1;//количество прерываний для нижнего уровня импульса
+g_ImpulseCounter=Profile.Mileage * Profile.Pulse1km;//количество импульсов для прохождения пути
+int t_trevel=ceil(Profile.Mileage*60.0/Profile.Velocity);
+HH_trevel=ceil(Profile.Mileage/Profile.Velocity);
+MM_trevel=t_trevel-60*HH_trevel;
+HH_left=HH_trevel;
+MM_left=MM_trevel;
+//Progressbar
+NImpPcharProgressbar=floor(g_ImpulseCounter/LCD_COLS);//Impulse per char in progressbar
+CImpPcharProgressbar=0;//Counter chars position in string progressbar
+CharPosInProgressbar=0;//Postion char in string progressbar
+
 #ifdef _DEBUG_GEN_CALC
 DebugFloat("FtIC=%s\n",FtIC,10,1);
 Debugln("----");
@@ -86,30 +110,36 @@ ISR(TIMER2_OVF_vect){ // Interrupt Service Routines (ISR)
 #ifdef  _DEBUG_GEN
 dInterruptCounter++;
 #endif
-if (gEnable)
+if (!gEnable)return;
+g_InterruptCounter++;
+if (g_ImpulsePhase)
   {
-  g_InterruptCounter++;
-  if (g_ImpulsePhase)
+  if (g_InterruptCounter == g_timerIntCntH)
     {
-    if (g_InterruptCounter == g_timerIntCntH)
-      {
-      g_ImpulsePhase=LOW;  
-      g_InterruptCounter=0;
-      digitalWrite(GEN_PIN, LOW);  
-      }
+    g_ImpulsePhase=LOW;  
+    g_InterruptCounter=0;
+    digitalWrite(GEN_PIN, LOW);  
     }
-  else
-    {    
-    if (g_InterruptCounter == g_timerIntCntL)    
+  }
+else
+  {    
+  if (g_InterruptCounter == g_timerIntCntL)    
+    {
+    g_ImpulsePhase=HIGH;  
+    g_InterruptCounter=0;
+    g_ImpulseCounter--;      
+    if (g_ImpulseCounter==0)
+      {GenStop();}
+    else
       {
-      g_ImpulsePhase=HIGH;  
-      g_InterruptCounter=0;
-      g_ImpulseCounter--;
-      if (g_ImpulseCounter==0)
-        GenStop();
-      else
-        digitalWrite(GEN_PIN, HIGH);        
+      digitalWrite(GEN_PIN, HIGH);
       }
-    }
+    CImpPcharProgressbar--;
+    if(CImpPcharProgressbar==0)
+      {
+      CImpPcharProgressbar=NImpPcharProgressbar;
+      CharPosInProgressbar++;       
+      }
+    } 
   }
 }

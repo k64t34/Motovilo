@@ -47,8 +47,8 @@ delay(1000);
 #endif
 //
 Profile.Name="Gazelle1";
-Profile.Mileage=100;
-Profile.Velocity=50;
+Profile.Mileage=1;
+Profile.Velocity=60;
 Profile.Pulse1km=6000;
 Profile.PulseVoltageHigh=5.1;
 Profile.PulseVoltageLow=0.1;
@@ -62,23 +62,47 @@ DebugFloat("Profile.PulseVoltageHigh=%s\n",Profile.PulseVoltageHigh,3,1);
 DebugFloat("Profile.PulseVoltageLow=%s\n",Profile.PulseVoltageLow,3,1);
 Debugln("Profile.PulseDuty=%d",Profile.PulseDuty);
 #endif 
+Choose_action::Screen.Loop= NULL;
+Choose_action::Screen.Load=NULL;
+Choose_action::Screen.Close=nullptr;
+Movement::Screen.Loop=&Movement_Loop;
+Movement::Screen.Load=&GenSet;
+Movement::Screen.Close=&Movement_Close;
+ScreenAdjustment::Screen.Loop=nullptr;
+ScreenAdjustment::Screen.Load=&GenSet;
+ScreenAdjustment::Screen.Close=&GenStop;
 ScreenManager.Screens[Choose_actionIndex]=&(Choose_action::Screen);           
 ScreenManager.Screens[ScreenAdjustmentIndex]=&(ScreenAdjustment::Screen);           
-  
+ScreenManager.Screens[MovementIndex]=&(Movement::Screen);           
 #ifdef  _DEBUG_GEN
 cur_time=millis();
 #else
 ScreenManager.Show(0);
 #endif
 GenTimerInit();
-GenSet();
+//GenSet();
 }
 //******************************************************************
 void loop(){
 //******************************************************************  
 key = kpd.getKey();  
-if (key)ScreenManager.Loop(key);
+if (key) ScreenManager.Loop(key);
+if (fRefreshInLoop) 
+  {
+  curMillis=millis();
+  if (curMillis>=NextMillisCheckProgress)
+    {    
+    NextMillisCheckProgress=curMillis+Period_Refresh;
+    (*pRefreshInLoop)();
+    }
+  }
  
+ 
+//C_loops1min_downcounter--;
+//if (C_loops1min_downcounter==0)
+//  {
+//    C_loops1min_downcounter=C_loops1min;
+//  }
   
 #ifdef  _DEBUG_GEN_CALC   
 lcd.setCursor(0,0);
@@ -115,7 +139,7 @@ lcd.print(((double)(dInterruptCounter-lastdInterruptCounter)/dtime)*(double)1000
 lastdInterruptCounter = dInterruptCounter;
 #endif
 
-delay(50);
+delay(T_loopdelay);
 }
 
 

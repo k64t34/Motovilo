@@ -4,7 +4,6 @@
 #include <LiquidCrystal.h>
 //#include "LiquidCrystalRus.h"
 
-
 #include "debug.h" 
 #include <MyDebug.h>
 #include "config.h"
@@ -52,6 +51,9 @@ lcd.print(Text);
 //
 // Variable
 //
+unsigned long curMillis;
+bool fRefreshInLoop=false;
+void (*pRefreshInLoop)();
 
 struct MyProfile
 {  
@@ -66,13 +68,12 @@ struct MyProfile
   };  
 MyProfile Profile;
 //MyProfile *Profile = &Profile1;
+#define Period_Refresh 1000
 #include "myGen.h"
-
 #include "myScreen.h"
+#include "Movement.h"
 #include "ScreenAdjustment.h"
 #include "Choose_action.h"
-#include "Movement.h"
- 
 
 
 const char strBoot[LCD_ROWS][LCD_COLS] PROGMEM =
