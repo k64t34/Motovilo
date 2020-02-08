@@ -106,11 +106,19 @@ else if (Screens[current]->KB_mode==KB_MODE_DIGIT)
     {
     GotoField(Key);
     }
-  else if (Key=='#') 
+  else if (Key==KEY_ENTER) 
     {        
+    if (Screens[current]->FieldsCount!=0)
+      {
       ((MyScreen*)Screens[Screens[current]->Fields[SelectedField].ActionData])->PreviousScreen=current;
       Show(Screens[current]->Fields[SelectedField].ActionData);   
+      }
     }
+  else if (Key==KEY_ESC) 
+    {
+    if (Screens[current]->Close!=0)(*Screens[current]->Close)();
+      Show(Screens[current]->PreviousScreen);
+    }    
   }
 else 
   {
@@ -126,19 +134,6 @@ lcd.setCursor(Screens[current]->Fields[SelectedField].Col-1+Screens[current]->Fi
 void MyScreenManager::Show(int Item){
 //************************************   
 current=Item;
-if (Screens[current]->Load!=nullptr)
-  {
-    (*Screens[current]->Load)();  
-  }
-if (Screens[current]->Loop!=nullptr)
-  {
-  pRefreshInLoop=Screens[current]->Loop;
-  fRefreshInLoop=true;    
-  }
-else
-  {
-  fRefreshInLoop=false;
-  }
 lcd.clear();
 char* adr=Screens[Item]->Rows;
 for (byte r=0;r!=LCD_ROWS;r++)
@@ -162,6 +157,19 @@ if(Screens[Item]->FieldsCount!=0)
   SelectedField=0;  
   lcd.setCursor(Screens[Item]->Fields[0].Col-1+Screens[Item]->Fields[0].Width,Screens[Item]->Fields[0].Row);
   lcd.blink();   
+  }
+if (Screens[current]->Load!=nullptr)
+  {    
+    (*Screens[current]->Load)();  
+  }
+if (Screens[current]->Loop!=nullptr)
+  {
+  pRefreshInLoop=Screens[current]->Loop;
+  fRefreshInLoop=true;    
+  }
+else
+  {
+  fRefreshInLoop=false;
   }
 }
 MyScreenManager ScreenManager;

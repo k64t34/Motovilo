@@ -161,3 +161,8 @@ MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields,.KB_m
 #undef FLD5_ACTIONDATA 
 #undef FLD5_MINVALUE 
 #undef FLD5_MAXVALUE 
+
+void Choose_action_Load(){
+printStatusString();
+lcd.setCursor(Choose_action::Screen.Fields[0].Col,Choose_action::Screen.Fields[0].Row);
+}

@@ -1,4 +1,5 @@
 #define DEBUG 1
+unsigned long NextMillisCheck;
 #include "Motovilo.h" 
 
 void setup(){
@@ -46,13 +47,18 @@ lcd.display();
 delay(1000);
 #endif
 //
-Profile.Name="Gazelle1";
-Profile.Mileage=1;
-Profile.Velocity=60;
+strcpy (Profile.Name,"Gazelle");
+Profile.Mileage=40;
+Profile.Velocity=120;
 Profile.Pulse1km=6000;
 Profile.PulseVoltageHigh=5.1;
 Profile.PulseVoltageLow=0.1;
 Profile.PulseDuty=50;
+sprintf(StatusString,"%s/%3ukph/%3ukm",
+  Profile.Name/*.substring(0,7)*/,
+  Profile.Velocity,  
+  Profile.Mileage
+  );
 #ifdef _DEBUG
 Debugln("Profile.Name=%s",Profile.Name);
 Debugln("Profile.Mileage=%d",Profile.Mileage);
@@ -61,16 +67,17 @@ Debugln("Profile.Pulse1km=%d",Profile.Pulse1km);
 DebugFloat("Profile.PulseVoltageHigh=%s\n",Profile.PulseVoltageHigh,3,1);
 DebugFloat("Profile.PulseVoltageLow=%s\n",Profile.PulseVoltageLow,3,1);
 Debugln("Profile.PulseDuty=%d",Profile.PulseDuty);
+Debugln(StatusString);
 #endif 
 Choose_action::Screen.Loop= NULL;
-Choose_action::Screen.Load=NULL;
+Choose_action::Screen.Load=&Choose_action_Load;
 Choose_action::Screen.Close=nullptr;
 Movement::Screen.Loop=&Movement_Loop;
-Movement::Screen.Load=&GenSet;
+Movement::Screen.Load=&Movement_Load;
 Movement::Screen.Close=&Movement_Close;
 ScreenAdjustment::Screen.Loop=nullptr;
-ScreenAdjustment::Screen.Load=&GenSet;
-ScreenAdjustment::Screen.Close=&GenStop;
+ScreenAdjustment::Screen.Load=&ScreenAdjustment_Load;
+ScreenAdjustment::Screen.Close=&ScreenAdjustment_Close;
 ScreenManager.Screens[Choose_actionIndex]=&(Choose_action::Screen);           
 ScreenManager.Screens[ScreenAdjustmentIndex]=&(ScreenAdjustment::Screen);           
 ScreenManager.Screens[MovementIndex]=&(Movement::Screen);           
@@ -80,23 +87,21 @@ cur_time=millis();
 ScreenManager.Show(0);
 #endif
 GenTimerInit();
-//GenSet();
 }
 //******************************************************************
 void loop(){
 //******************************************************************  
 key = kpd.getKey();  
-if (key) ScreenManager.Loop(key);
 if (fRefreshInLoop) 
   {
   curMillis=millis();
-  if (curMillis>=NextMillisCheckProgress)
+  if (curMillis>=NextMillisCheck)
     {    
-    NextMillisCheckProgress=curMillis+Period_Refresh;
+    NextMillisCheck=curMillis+(unsigned long)Period_Refresh;
     (*pRefreshInLoop)();
     }
   }
- 
+if (key) ScreenManager.Loop(key); 
  
 //C_loops1min_downcounter--;
 //if (C_loops1min_downcounter==0)

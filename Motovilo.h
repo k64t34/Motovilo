@@ -54,11 +54,12 @@ lcd.print(Text);
 unsigned long curMillis;
 bool fRefreshInLoop=false;
 void (*pRefreshInLoop)();
+char StatusString[LCD_COLS];
 
 struct MyProfile
 {  
   public:
-  String  Name;
+  char  Name[LCD_COLS];
   int Mileage ;//Пробег
   byte Velocity;
   int Pulse1km;
@@ -67,6 +68,12 @@ struct MyProfile
   byte PulseDuty;  
   };  
 MyProfile Profile;
+
+printStatusString(){//************************************
+lcd.setCursor(0,3);
+lcd.print(StatusString);
+}
+
 //MyProfile *Profile = &Profile1;
 #define Period_Refresh 1000
 #include "myGen.h"

@@ -1,9 +1,9 @@
 #define MovementIndex 2
 #define NAMESPACE Movement
-#define SCREENROW1  "     Movement       "
-#define SCREENROW2  "|                   "
+#define SCREENROW1  "      Movement      "
+#define SCREENROW2  "                    "
 #define SCREENROW3  "rest 99:59 of 99:59 "
-#define SCREENROW4  "GAZelle/200kph/500km"
+#define SCREENROW4  "                    "
 
 //struct MyField{  
 //   byte Type ;//0-char,byte,1-int,2-Float,Double,3-String 
@@ -18,7 +18,7 @@
 //  void* minValue 
 //  void* maxValue 
 //};  
-#define FLD_COUNT 1
+#define FLD_COUNT 0
 //1
 #define FLD1_TYPE 0  
 #define FLD1_COL  5
@@ -167,18 +167,61 @@ MyScreen Screen = {
 #undef FLD5_MINVALUE 
 #undef FLD5_MAXVALUE 
 
-byte lastCharPosInProgressbar=255;
+byte lastCharPosInProgressbar;
 
+void Movement_Load(){
+lastCharPosInProgressbar=0;
+printStatusString();
+GenSet();    
+lcd.setCursor(14,2);
+char buff[6];
+sprintf(buff,"%02d:%02d",HH_trevel,MM_trevel);
+lcd.print(buff);
+lcd.setCursor(5,2);
+sprintf(buff,"%02d:%02d",HH_left,MM_left);
+lcd.print(buff);
+lcd.setCursor(lastCharPosInProgressbar,1);
+}
 void Movement_Loop(){
-if (lastCharPosInProgressbar!=CharPosInProgressbar)
-  {
-  lcd.setCursor(CharPosInProgressbar,1);
-  lcd.write(255);
-  lastCharPosInProgressbar=CharPosInProgressbar;
+if(!gEnable)
+  {  
+  lcd.setCursor(0,0);
+  lcd.print("Movement finished");
+  lcd.setCursor(5,2);
+  lcd.print("00:00");
+  lcd.setCursor(19,1); 
+  lcd.noBlink();
+  fRefreshInLoop=false;
+  return;
   }
+#ifdef _DEBUG_PROGRSSBAR
+Debugln("Millis\tlastCharPosInProgressbar\tCharPosInProgressbar\tCImpPcharProgressbar");
+Serial.print(curMillis);
+Debugln("\t\t%d\t\t\t%d\t\t\t%l",lastCharPosInProgressbar,CharPosInProgressbar,CImpPcharProgressbar);
+#endif  
+if (lastCharPosInProgressbar!=CharPosInProgressbar)
+  {  
+  lcd.setCursor(lastCharPosInProgressbar,1);
+  lcd.write(255);
+  if (CharPosInProgressbar!=LCD_COLS)    lastCharPosInProgressbar=CharPosInProgressbar;
+  }  
+C_Refresh1min--;
+if (C_Refresh1min==0)
+  {
+  C_Refresh1min=N_Refresh1min;      
+  if (MM_left==0)
+    if (HH_left==0) {MM_left=1;}
+    else {HH_left--;MM_left=59;}
+  else
+    MM_left--;  
+  char buff[6];
+  sprintf(buff,"%02d:%02d",HH_left,MM_left);
+  lcd.setCursor(5,2);
+  lcd.print(buff); 
+  lcd.setCursor(lastCharPosInProgressbar,1);
+  }    
 }
 void Movement_Close(){
-//GenStop();
-lcd.setCursor(0,3);
-lcd.write('   F I N I S H   ');
+lcd.blink();
+GenStop();
 }

@@ -1,9 +1,9 @@
 #define ScreenAdjustmentIndex 1
 #define NAMESPACE ScreenAdjustment
 #define SCREENROW1  "     Adjustment     "
-#define SCREENROW2  "U-=___ V  1Km=____\xa2L"
-#define SCREENROW3  "U_=___ V  V=___Km/h "
-#define SCREENROW4  "Kd=__%              "
+#define SCREENROW2  "S=___km    V=___Km/h"
+#define SCREENROW3  "U=___ V    Kd=__%   "
+#define SCREENROW4  "1Km=____\xa2L          "
 //struct MyField{  
 //   byte Type ;//0-char,1-int,2-Float,Double,3-String,4-byte 
 //   byte Col ;
@@ -19,60 +19,60 @@
 //};  
 #define FLD_COUNT 5
 
-#define FLD1_TYPE 2  
-#define FLD1_COL  3
+#define FLD1_TYPE 1  
+#define FLD1_COL  2
 #define FLD1_ROW  1
 #define FLD1_WIDTH  3
-#define FLD1_DECIMAL  1
+#define FLD1_DECIMAL  0
 #define FLD1_ACTION   2
 #define FLD1_ACTIONDATA 0
-#define FLD1_VALUE   &Profile.PulseVoltageHigh 
-#define FLD1_MINVALUE &FLD_FLOAT_MINVALUE_5 
-#define FLD1_MAXVALUE &FLD_FLOAT_MAXVALUE_9 
+#define FLD1_VALUE   &Profile.Mileage 
+#define FLD1_MINVALUE &FLD_INT_MINVALUE_ONE 
+#define FLD1_MAXVALUE &FLD_INT_MAXVALUE_1000 
 
-#define FLD2_TYPE 2  
-#define FLD2_COL  3
-#define FLD2_ROW  2
+#define FLD2_TYPE 4  
+#define FLD2_COL  13
+#define FLD2_ROW  1
 #define FLD2_WIDTH  3
-#define FLD2_DECIMAL  1
+#define FLD2_DECIMAL  0
 #define FLD2_ACTION   2
 #define FLD2_ACTIONDATA 0
-#define FLD2_VALUE   &Profile.PulseVoltageLow 
-#define FLD2_MINVALUE &FLD_FLOAT_MINVALUE_ZERO 
-#define FLD2_MAXVALUE &FLD_FLOAT_MAXVALUE_1 
+#define FLD2_VALUE   &Profile.Velocity 
+#define FLD2_MINVALUE &FLD_BYTE_MINVALUE_ONE 
+#define FLD2_MAXVALUE &FLD_BYTE_MAXVALUE_255 
 
-#define FLD3_TYPE 4  
-#define FLD3_COL  3
-#define FLD3_ROW  3
-#define FLD3_WIDTH  2
-#define FLD3_DECIMAL  0
+#define FLD3_TYPE 2  
+#define FLD3_COL  2
+#define FLD3_ROW  2
+#define FLD3_WIDTH  3
+#define FLD3_DECIMAL  1
 #define FLD3_ACTION   2
 #define FLD3_ACTIONDATA 0
-#define FLD3_VALUE   &Profile.PulseDuty 
-#define FLD3_MINVALUE &FLD_BYTE_MINVALUE_5 
-#define FLD3_MAXVALUE &FLD_BYTE_MAXVALUE_95 
+#define FLD3_VALUE   &Profile.PulseVoltageHigh 
+#define FLD3_MINVALUE &FLD_FLOAT_MINVALUE_5 
+#define FLD3_MAXVALUE &FLD_FLOAT_MAXVALUE_9 
 
-#define FLD4_TYPE 1  
+#define FLD4_TYPE 4  
 #define FLD4_COL  14
-#define FLD4_ROW  1
-#define FLD4_WIDTH  4
+#define FLD4_ROW  2
+#define FLD4_WIDTH  2
 #define FLD4_DECIMAL  0
 #define FLD4_ACTION   2
 #define FLD4_ACTIONDATA 0
-#define FLD4_VALUE   &Profile.Pulse1km 
-#define FLD4_MINVALUE &FLD_INT_MINVALUE_ONE 
-#define FLD4_MAXVALUE &FLD_INT_MAXVALUE_10000 
+#define FLD4_VALUE   &Profile.PulseDuty 
+#define FLD4_MINVALUE &FLD_BYTE_MINVALUE_5 
+#define FLD4_MAXVALUE &FLD_BYTE_MAXVALUE_95 
 
-#define FLD5_TYPE 4  
-#define FLD5_COL  12
-#define FLD5_ROW  2
-#define FLD5_WIDTH  3
+#define FLD5_TYPE 1  
+#define FLD5_COL  4
+#define FLD5_ROW  3
+#define FLD5_WIDTH  4
 #define FLD5_DECIMAL  0
 #define FLD5_ACTION   2
 #define FLD5_ACTIONDATA 0
-#define FLD5_VALUE   &Profile.Velocity 
-#define FLD5_MINVALUE &FLD_BYTE_MINVALUE_ONE 
-#define FLD5_MAXVALUE &FLD_BYTE_MAXVALUE_255 
+#define FLD5_VALUE   &Profile.Pulse1km 
+#define FLD5_MINVALUE &FLD_INT_MINVALUE_ONE 
+#define FLD5_MAXVALUE &FLD_INT_MAXVALUE_10000 
 
 namespace NAMESPACE
 {
@@ -160,3 +160,12 @@ MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields,.KB_m
 #undef FLD5_ACTIONDATA 
 #undef FLD5_MINVALUE 
 #undef FLD5_MAXVALUE 
+void ScreenAdjustment_Load(){
+GenSet();    
+lcd.setCursor(ScreenAdjustment::Screen.Fields[0].Col,ScreenAdjustment::Screen.Fields[0].Row);
+}
+void ScreenAdjustment_Close(){
+GenStop();
+sprintf(StatusString,"%s/%3ukph/%3ukm",Profile.Name,Profile.Velocity,Profile.Mileage);
+}
+  
