@@ -54,12 +54,11 @@ lcd.print(Text);
 unsigned long curMillis;
 bool fRefreshInLoop=false;
 void (*pRefreshInLoop)();
-char StatusString[LCD_COLS];
+
 
 struct MyProfile
-{  
-  public:
-  char  Name[LCD_COLS];
+{ 
+  char Title[LCD_COLS];
   int Mileage ;//Пробег
   byte Velocity;
   int Pulse1km;
@@ -71,7 +70,14 @@ MyProfile Profile;
 
 printStatusString(){//************************************
 lcd.setCursor(0,3);
-lcd.print(StatusString);
+lcd.print(Profile.Title);
+lcd.setCursor(7,3);
+lcd.write(' ');
+lcd.print(Profile.Velocity);
+lcd.print("kmh");
+lcd.write(' ');
+lcd.print(Profile.Mileage);
+lcd.print("km");
 }
 
 //MyProfile *Profile = &Profile1;

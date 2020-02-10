@@ -3,7 +3,7 @@
 #define SCREENROW1  "  Choose an action  "
 #define SCREENROW2  " .START             "
 #define SCREENROW3  " .SETUP             "
-#define SCREENROW4  "GAZelle/200kph/500km"
+#define SCREENROW4  "                    "
 
 //struct MyField{  
 //   byte Type ;//0-char,byte,1-int,2-Float,Double,3-String 

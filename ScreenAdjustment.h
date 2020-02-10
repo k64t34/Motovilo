@@ -2,8 +2,9 @@
 #define NAMESPACE ScreenAdjustment
 #define SCREENROW1  "     Adjustment     "
 #define SCREENROW2  "S=___km    V=___Km/h"
-#define SCREENROW3  "U=___ V    Kd=__%   "
-#define SCREENROW4  "1Km=____\xa2L          "
+#define SCREENROW3  "1Km=____\xa2L Kd=__%   "
+#define SCREENROW4  "U=_._ V    Um=-.- V "
+
 //struct MyField{  
 //   byte Type ;//0-char,1-int,2-Float,Double,3-String,4-byte 
 //   byte Col ;
@@ -41,16 +42,16 @@
 #define FLD2_MINVALUE &FLD_BYTE_MINVALUE_ONE 
 #define FLD2_MAXVALUE &FLD_BYTE_MAXVALUE_255 
 
-#define FLD3_TYPE 2  
-#define FLD3_COL  2
+#define FLD3_TYPE 1  
+#define FLD3_COL  4
 #define FLD3_ROW  2
-#define FLD3_WIDTH  3
-#define FLD3_DECIMAL  1
+#define FLD3_WIDTH  4
+#define FLD3_DECIMAL  0
 #define FLD3_ACTION   2
 #define FLD3_ACTIONDATA 0
-#define FLD3_VALUE   &Profile.PulseVoltageHigh 
-#define FLD3_MINVALUE &FLD_FLOAT_MINVALUE_5 
-#define FLD3_MAXVALUE &FLD_FLOAT_MAXVALUE_9 
+#define FLD3_VALUE   &Profile.Pulse1km 
+#define FLD3_MINVALUE &FLD_INT_MINVALUE_ONE 
+#define FLD3_MAXVALUE &FLD_INT_MAXVALUE_10000 
 
 #define FLD4_TYPE 4  
 #define FLD4_COL  14
@@ -63,16 +64,27 @@
 #define FLD4_MINVALUE &FLD_BYTE_MINVALUE_5 
 #define FLD4_MAXVALUE &FLD_BYTE_MAXVALUE_95 
 
-#define FLD5_TYPE 1  
-#define FLD5_COL  4
+#define FLD5_TYPE 2  
+#define FLD5_COL  2
 #define FLD5_ROW  3
-#define FLD5_WIDTH  4
-#define FLD5_DECIMAL  0
+#define FLD5_WIDTH  3
+#define FLD5_DECIMAL  1
 #define FLD5_ACTION   2
 #define FLD5_ACTIONDATA 0
-#define FLD5_VALUE   &Profile.Pulse1km 
-#define FLD5_MINVALUE &FLD_INT_MINVALUE_ONE 
-#define FLD5_MAXVALUE &FLD_INT_MAXVALUE_10000 
+#define FLD5_VALUE   &Profile.PulseVoltageHigh 
+#define FLD5_MINVALUE &FLD_FLOAT_MINVALUE_5 
+#define FLD5_MAXVALUE &FLD_FLOAT_MAXVALUE_9 
+
+#define FLD6_TYPE 1  
+#define FLD6_COL  14
+#define FLD6_ROW  3
+#define FLD6_WIDTH  3
+#define FLD6_DECIMAL  1
+#define FLD6_ACTION   0
+#define FLD6_ACTIONDATA 0
+#define FLD6_VALUE   &Profile.Pulse1km 
+#define FLD6_MINVALUE &FLD_FLOAT_MINVALUE_ZERO 
+#define FLD6_MAXVALUE &FLD_FLOAT_MAXVALUE_9 
 
 namespace NAMESPACE
 {
@@ -166,6 +178,18 @@ lcd.setCursor(ScreenAdjustment::Screen.Fields[0].Col,ScreenAdjustment::Screen.Fi
 }
 void ScreenAdjustment_Close(){
 GenStop();
-sprintf(StatusString,"%s/%3ukph/%3ukm",Profile.Name,Profile.Velocity,Profile.Mileage);
 }
+
+void ScreenAdjustment_refresh(){
+lcd.noBlink();
+lcd.setCursor(14,3);
+char buff[4];
+dtostrf(map(analogRead(MEASUREMENT_PIN), 0, 1024, 0, 50)/10,3,1, buff);
+lcd.print(buff);
+lcd.setCursor(ScreenAdjustment::Screen.Fields[ScreenManager.SelectedField].Col,
+ScreenAdjustment::Screen.Fields[ScreenManager.SelectedField].Row);
+lcd.blink();
+}
+
+
   

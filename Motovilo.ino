@@ -3,6 +3,7 @@ unsigned long NextMillisCheck;
 #include "Motovilo.h" 
 
 void setup(){
+pinMode(MEASUREMENT_PIN,INPUT);
 #ifdef _DEBUG
 Serial.begin(115200);
 Debugln("Setup...");
@@ -46,28 +47,22 @@ delay(500);
 lcd.display();
 delay(1000);
 #endif
-//
-strcpy (Profile.Name,"Gazelle");
+strcpy (Profile.Title,"Gazelle");
+Debugln("1Profile.Title=%s",Profile.Title);
 Profile.Mileage=40;
 Profile.Velocity=120;
 Profile.Pulse1km=6000;
 Profile.PulseVoltageHigh=5.1;
 Profile.PulseVoltageLow=0.1;
 Profile.PulseDuty=50;
-sprintf(StatusString,"%s/%3ukph/%3ukm",
-  Profile.Name/*.substring(0,7)*/,
-  Profile.Velocity,  
-  Profile.Mileage
-  );
 #ifdef _DEBUG
-Debugln("Profile.Name=%s",Profile.Name);
+Debugln("Profile.Name=%s",Profile.Title);
 Debugln("Profile.Mileage=%d",Profile.Mileage);
 Debugln("Profile.Velocity=%d",Profile.Velocity);
 Debugln("Profile.Pulse1km=%d",Profile.Pulse1km);
 DebugFloat("Profile.PulseVoltageHigh=%s\n",Profile.PulseVoltageHigh,3,1);
 DebugFloat("Profile.PulseVoltageLow=%s\n",Profile.PulseVoltageLow,3,1);
 Debugln("Profile.PulseDuty=%d",Profile.PulseDuty);
-Debugln(StatusString);
 #endif 
 Choose_action::Screen.Loop= NULL;
 Choose_action::Screen.Load=&Choose_action_Load;
@@ -75,7 +70,7 @@ Choose_action::Screen.Close=nullptr;
 Movement::Screen.Loop=&Movement_Loop;
 Movement::Screen.Load=&Movement_Load;
 Movement::Screen.Close=&Movement_Close;
-ScreenAdjustment::Screen.Loop=nullptr;
+ScreenAdjustment::Screen.Loop=&ScreenAdjustment_refresh;
 ScreenAdjustment::Screen.Load=&ScreenAdjustment_Load;
 ScreenAdjustment::Screen.Close=&ScreenAdjustment_Close;
 ScreenManager.Screens[Choose_actionIndex]=&(Choose_action::Screen);           
