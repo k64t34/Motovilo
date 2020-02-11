@@ -178,18 +178,29 @@ lcd.setCursor(ScreenAdjustment::Screen.Fields[0].Col,ScreenAdjustment::Screen.Fi
 }
 void ScreenAdjustment_Close(){
 GenStop();
+MyProfile lastProfile;
+eeprom_read_block((void*)&lastProfile, 0, sizeof(lastProfile));
+bool needRewrite=false;
+if ( Profile.Mileage  != lastProfile.Mileage )  needRewrite=true;  
+if ( Profile.Velocity != lastProfile.Velocity ) needRewrite=true;  
+if ( Profile.Pulse1km != lastProfile.Pulse1km)  needRewrite=true;  
+if ( Profile.PulseVoltageHigh != lastProfile.PulseVoltageHigh) needRewrite=true;
+if ( Profile.PulseDuty != lastProfile.PulseDuty) needRewrite=true;
+if (needRewrite)EEPROM.put(0,Profile);  
 }
 
 void ScreenAdjustment_refresh(){
+if (!EditField.EditMode) {
 lcd.noBlink();
 lcd.setCursor(14,3);
 char buff[4];
 dtostrf(map(analogRead(MEASUREMENT_PIN), 0, 1024, 0, 50)/10,3,1, buff);
 lcd.print(buff);
-lcd.setCursor(ScreenAdjustment::Screen.Fields[ScreenManager.SelectedField].Col,
+lcd.setCursor(
+ScreenAdjustment::Screen.Fields[ScreenManager.SelectedField].Col,
 ScreenAdjustment::Screen.Fields[ScreenManager.SelectedField].Row);
 lcd.blink();
-}
+}}
 
 
   

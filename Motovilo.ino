@@ -47,14 +47,38 @@ delay(500);
 lcd.display();
 delay(1000);
 #endif
+//eeprom_read_block((void*)&Profile, 0, sizeof(Profile));
+EEPROM.get(0,Profile);
+
+bool needRewrite=false;
 strcpy (Profile.Title,"Gazelle");
-Debugln("1Profile.Title=%s",Profile.Title);
-Profile.Mileage=40;
-Profile.Velocity=120;
-Profile.Pulse1km=6000;
-Profile.PulseVoltageHigh=5.1;
-Profile.PulseVoltageLow=0.1;
-Profile.PulseDuty=50;
+if (Profile.Mileage<1 || Profile.Mileage>999)
+  {
+  needRewrite=true;  
+  Profile.Mileage=100;
+  }
+if (Profile.Velocity<1 || Profile.Velocity>255) 
+  {
+  needRewrite=true;    
+  Profile.Velocity=60;
+  }
+if (Profile.Pulse1km<1 || Profile.Pulse1km>=6000)
+  {
+  needRewrite=true; 
+  Profile.Pulse1km=6000;     
+  }
+if (isnan(Profile.PulseVoltageHigh) || Profile.PulseVoltageHigh < 5.0 || Profile.PulseVoltageHigh > 8.5)
+  {
+  needRewrite=true; 
+  Profile.PulseVoltageHigh=5.1;
+  }
+if (Profile.PulseDuty < 5 || Profile.PulseDuty > 95)
+  {
+  needRewrite=true;   
+  Profile.PulseDuty=50;
+  }
+if (needRewrite)EEPROM.put(0,Profile);
+
 #ifdef _DEBUG
 Debugln("Profile.Name=%s",Profile.Title);
 Debugln("Profile.Mileage=%d",Profile.Mileage);

@@ -1,6 +1,6 @@
 #define _DEBUG 1
 #include <avr/pgmspace.h>
-//#include <EEPROM.h>
+#include <EEPROM.h>
 #include <LiquidCrystal.h>
 //#include "LiquidCrystalRus.h"
 
