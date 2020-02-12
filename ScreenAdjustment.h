@@ -191,10 +191,10 @@ if (needRewrite)EEPROM.put(0,Profile);
 
 void ScreenAdjustment_refresh(){
 if (!EditField.EditMode) {
+char buff[4];
+dtostrf((map(Umeasurement, 0, 1024, 0, 50)/10.0),3,1, buff);
 lcd.noBlink();
 lcd.setCursor(14,3);
-char buff[4];
-dtostrf(map(analogRead(MEASUREMENT_PIN), 0, 1024, 0, 50)/10,3,1, buff);
 lcd.print(buff);
 lcd.setCursor(
 ScreenAdjustment::Screen.Fields[ScreenManager.SelectedField].Col,

@@ -119,6 +119,11 @@ if (!gEnable)return;
 g_InterruptCounter++;
 if (g_ImpulsePhase)
   {
+  if(!fUmeasurement)
+    {
+    fUmeasurement=true;
+    Umeasurement=analogRead(MEASUREMENT_PIN);
+    }
   if (g_InterruptCounter == g_timerIntCntH)
     {
     g_ImpulsePhase=LOW;  
@@ -138,12 +143,13 @@ else
     else
       {
       digitalWrite(GEN_PIN, HIGH);
+      fUmeasurement=false;
       }
     CImpPcharProgressbar--;
     if(CImpPcharProgressbar==0)
       {
       CImpPcharProgressbar=NImpPcharProgressbar;
-      CharPosInProgressbar++;       
+      CharPosInProgressbar++;                   
       }
     } 
   }

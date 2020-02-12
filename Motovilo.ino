@@ -1,4 +1,4 @@
-#define DEBUG 1
+#define nDEBUG 1
 unsigned long NextMillisCheck;
 #include "Motovilo.h" 
 

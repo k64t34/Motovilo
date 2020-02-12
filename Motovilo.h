@@ -1,11 +1,12 @@
-#define _DEBUG 1
 #include <avr/pgmspace.h>
 #include <EEPROM.h>
 #include <LiquidCrystal.h>
 //#include "LiquidCrystalRus.h"
 
+#ifdef _DEBUG
 #include "debug.h" 
 #include <MyDebug.h>
+#endif
 #include "config.h"
 
 LiquidCrystal lcd(LCD_RS,LCD_E,LCD_D4,LCD_D5,LCD_D6,LCD_D7);
@@ -67,7 +68,8 @@ struct MyProfile
   byte PulseDuty;  
   };  
 MyProfile Profile;
-
+volatile int Umeasurement;
+volatile bool fUmeasurement=true;
 printStatusString(){//************************************
 lcd.setCursor(0,3);
 lcd.print(Profile.Title);
@@ -93,7 +95,7 @@ const char strBoot[LCD_ROWS][LCD_COLS] PROGMEM =
 {
 "  L O A D I N G ... ",
 " Crankshaft sensor  ",
-" TESTER   ver 0102  ",
+" TESTER   ver 1202  ",
 "   (c) Bosch 2020   "};
 
 /*
