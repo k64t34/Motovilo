@@ -192,7 +192,7 @@ if (needRewrite)EEPROM.put(0,Profile);
 void ScreenAdjustment_refresh(){
 if (!EditField.EditMode) {
 char buff[4];
-dtostrf((map(Umeasurement, 0, 1024, 0, 50)/10.0),3,1, buff);
+dtostrf((map(Umeasurement, 0, 1024, 0, 50)* MEASUREMENT_K/10.0),3,1, buff);
 lcd.noBlink();
 lcd.setCursor(14,3);
 lcd.print(buff);
