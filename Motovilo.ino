@@ -6,7 +6,7 @@ void setup(){
 pinMode(MEASUREMENT_PIN,INPUT);
 #ifdef _DEBUG
 Serial.begin(115200);
-Debugln("Setup...");
+Debugln("Setup.....");
 #endif  
 //#ifdef _DEBUG_PROFILE   1
 //for ( int i=0;i!=5;i++)
