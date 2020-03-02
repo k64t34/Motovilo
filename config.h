@@ -17,6 +17,3 @@
 #define I2C_SCL  A5
 //Gen
 #define GEN_PIN A0
-//Voltage measurement
-#define MEASUREMENT_PIN A6
-#define MEASUREMENT_K 3.2f

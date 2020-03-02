@@ -3,7 +3,6 @@ unsigned long NextMillisCheck;
 #include "Motovilo.h" 
 
 void setup(){
-pinMode(MEASUREMENT_PIN,INPUT);
 #ifdef _DEBUG
 Serial.begin(115200);
 Debugln("Setup.....");
@@ -94,7 +93,7 @@ Choose_action::Screen.Close=nullptr;
 Movement::Screen.Loop=&Movement_Loop;
 Movement::Screen.Load=&Movement_Load;
 Movement::Screen.Close=&Movement_Close;
-ScreenAdjustment::Screen.Loop=&ScreenAdjustment_refresh;
+ScreenAdjustment::Screen.Loop=nullptr;
 ScreenAdjustment::Screen.Load=&ScreenAdjustment_Load;
 ScreenAdjustment::Screen.Close=&ScreenAdjustment_Close;
 ScreenManager.Screens[Choose_actionIndex]=&(Choose_action::Screen);           

@@ -3,7 +3,7 @@
 #define SCREENROW1  "     Adjustment     "
 #define SCREENROW2  "S=___km    V=___Km/h"
 #define SCREENROW3  "1Km=____\xa2L Kd=__%   "
-#define SCREENROW4  "U=_._ V    Um=-.- V "
+#define SCREENROW4  "                    "
 
 //struct MyField{  
 //   byte Type ;//0-char,1-int,2-Float,Double,3-String,4-byte 
@@ -18,7 +18,7 @@
 //  void* minValue 
 //  void* maxValue 
 //};  
-#define FLD_COUNT 5
+#define FLD_COUNT 4
 
 #define FLD1_TYPE 1  
 #define FLD1_COL  2
@@ -189,18 +189,7 @@ if ( Profile.PulseDuty != lastProfile.PulseDuty) needRewrite=true;
 if (needRewrite)EEPROM.put(0,Profile);  
 }
 
-void ScreenAdjustment_refresh(){
-if (!EditField.EditMode) {
-char buff[4];
-dtostrf((map(Umeasurement, 0, 1024, 0, 50)* MEASUREMENT_K/10.0),3,1, buff);
-lcd.noBlink();
-lcd.setCursor(14,3);
-lcd.print(buff);
-lcd.setCursor(
-ScreenAdjustment::Screen.Fields[ScreenManager.SelectedField].Col,
-ScreenAdjustment::Screen.Fields[ScreenManager.SelectedField].Row);
-lcd.blink();
-}}
+
 
 
   
