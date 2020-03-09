@@ -5,3 +5,4 @@
 //#define _DEBUG_PROFILE   1
 //#define _DEBUG_PROGRSSBAR   1
 //#define _DEBUG_STATUSSTRING   1
+//#define _DEBUG_ACCELARATION   1

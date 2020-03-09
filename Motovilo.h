@@ -93,7 +93,7 @@ const char strBoot[LCD_ROWS][LCD_COLS] PROGMEM =
 {
 "  L O A D I N G ... ",
 " Crankshaft sensor  ",
-" TESTER   ver 0203  ",
+" TESTER   ver 0903  ",
 "   (c) Bosch 2020   "};
 
 /*

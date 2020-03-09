@@ -7,18 +7,30 @@ unsigned long cur_time=1;
 volatile unsigned long dInterruptCounter=0;
 unsigned long lastdInterruptCounter=0;
 #endif
+//Acceleration
+volatile bool a_braking;
+byte a0=1; //acceleration (km/h)/100ms
+volatile byte a; //current acceleration (km/h)/100ms
+const byte V0=10;// Start velocity km/h
+volatile byte V;// Curent velocity
+byte Vset;// Установленная скорость
+volatile unsigned long g_ImpulseCountAcceleration;//Кол-во импульсво на разгон и торможение
+
+volatile unsigned int g_timerIntCntH=1024; //Текущее время высокого уровня импульса
+volatile unsigned int g_timerIntCntL=4096; //Текущее время низкого уровня импульса
+float K_3600_FTtIC_Pulse1km;
+volatile unsigned long InterruptCounter100ms;
 // Gen
 const unsigned long g_Fclk=15104000; //Частота процессора 16MHz
 const int g_timerPrescale = 8;// 1024/256/64/8/1  - prescale value
 //const byte g_timerOCR =255;//Output compare register
 bool gEnable=false; //вкл/выкл генерацию
 bool gMeasureUhMode=false; // перевод в режим измерения уровня напряжения выского уровня импульса
-volatile unsigned int g_timerIntCntH=1024; //Время высокого уровня импульса
-volatile unsigned int g_timerIntCntL=4096; //Время низкого уровня импульса
 volatile bool g_ImpulsePhase=LOW;// 1- время высокого, 0 -время низкого
 volatile unsigned long g_InterruptCounter; // Счетчик прерываний
 volatile unsigned long g_ImpulseCounter=MAX_UnsignedLong;// Счетчик импульсов
 float FtIC=59000.0; //Частота появления прерываний таймера
+unsigned long Interrupt100ms = 5900;
 //Progressbar
 unsigned long NImpPcharProgressbar; //Кол-во импульсов на один символ прогрессбара
 volatile unsigned long CImpPcharProgressbar;// Счетчик импульсов прохождения одного символа в прогрессбаре
@@ -41,6 +53,19 @@ CImpPcharProgressbar=NImpPcharProgressbar;
 Millis_start=millis();
 C_Refresh1min=N_Refresh1min;
 NextMillisCheck=millis()+Period_Refresh;
+InterruptCounter100ms=Interrupt100ms;
+V=V0;
+a=a0;
+g_ImpulseCountAcceleration=g_ImpulseCounter;
+a_braking=false;
+#ifdef  _DEBUG_ACCELARATION
+  Debugln("a0=%d",a0);
+  Debugln("a=%d",a);
+  Debugln("V0=%d",V0);
+  Debugln("Vset=%d",Vset);
+  Debugln("V=%d",V);
+  Debugln("InterruptCounter100ms=%d",InterruptCounter100ms);
+#endif
 gEnable=true; 
 }
 //******************************************************************  
@@ -51,13 +76,13 @@ Debugln("GenStop");
 #endif
 gEnable=false;
 g_ImpulsePhase=LOW;
-digitalWrite(GEN_PIN, LOW);
+digitalWrite(GEN_PIN, HIGH);
 }
 //******************************************************************  
 void GenTimerInit(){
 //******************************************************************    
 pinMode(GEN_PIN, OUTPUT);
-//pinMode(GEN_LED_PIN, OUTPUT);
+digitalWrite(GEN_PIN, HIGH); 
 //Set timer2
 //- остановка таймера,
 TCCR2A = 0;
@@ -71,16 +96,19 @@ TCCR2A |= (0<<COM2A1) || (0<<COM2A0) | (0<< COM2B1)| (0<< COM2B0)| (0<< WGM21)|(
 //TCCR2B |= (1<<FOC2A)| (1<<FOC2B)|(0<<WGM22)|(0<<CS22)|(1<<CS21)|(1<<CS20); // Prescal / 32
 TCCR2B |= (1<<FOC2A)| (1<<FOC2B)|(0<<WGM22)|(0<<CS22)|(0<<CS21)|(1<<CS20); // Prescal no prescaling
 GTCCR|=(1<<PSRASY); //Reset Prescaler. В о з можно это и не нужно  
-}
-//******************************************************************
+}//******************************************************************
 void GenSet(){
 //******************************************************************  
 GenStop();
 FtIC=(float)g_Fclk / 256.0;//Частота появления прерываний таймера
-unsigned int TintCount=ceil(3600.0 * FtIC / (float)Profile.Velocity / (float)Profile.Pulse1km);//количество прерываний для верхнего уровня импульса
-g_timerIntCntH=ceil( (float)((unsigned long)TintCount * (unsigned long)Profile.PulseDuty) / 100.0    ) ;
+K_3600_FTtIC_Pulse1km=3600.0 * FtIC / (float)Profile.Pulse1km;
+Vset=Profile.Velocity;
+
+unsigned int TintCount=ceil(K_3600_FTtIC_Pulse1km / V0);//количество прерываний для верхнего уровня импульса
+g_timerIntCntH=ceil( (float)((unsigned long)TintCount * (unsigned long)(100-Profile.PulseDuty) ) / 100.0 ) ;
 if (TintCount>g_timerIntCntH) g_timerIntCntL=TintCount-g_timerIntCntH;else g_timerIntCntL=1;//количество прерываний для нижнего уровня импульса
 g_ImpulseCounter=(unsigned long)Profile.Mileage * (unsigned long)Profile.Pulse1km;//количество импульсов для прохождения пути
+
 //Progress time
 int Tmin_trevel=ceil((float)(60*Profile.Mileage)/(float)Profile.Velocity);
 if (Tmin_trevel==0) Tmin_trevel=1;
@@ -116,19 +144,19 @@ ISR(TIMER2_OVF_vect){ // Interrupt Service Routines (ISR)
 dInterruptCounter++;
 #endif
 if (!gEnable)return;
-g_InterruptCounter++;
-if (g_ImpulsePhase)
+g_InterruptCounter++;// Счетчик прерываний
+if (g_ImpulsePhase) // 1- время высокого, 0 -время низкого
   {  
-  if (g_InterruptCounter == g_timerIntCntH)
+  if (g_InterruptCounter >= g_timerIntCntH) //Текущее время высокого уровня импульса
     {
-    g_ImpulsePhase=LOW;  
-    g_InterruptCounter=0;
-    digitalWrite(GEN_PIN, LOW);  
+    g_ImpulsePhase=LOW;      
+    digitalWrite(GEN_PIN, LOW);
+    g_InterruptCounter=0;    
     }
   }
 else
   {    
-  if (g_InterruptCounter == g_timerIntCntL)    
+  if (g_InterruptCounter >= g_timerIntCntL)    
     {
     g_ImpulsePhase=HIGH;  
     g_InterruptCounter=0;
@@ -138,6 +166,7 @@ else
     else
       {
       digitalWrite(GEN_PIN, HIGH);      
+      if (g_ImpulseCounter==g_ImpulseCountAcceleration){a_braking=true;a=a0;}
       }
     CImpPcharProgressbar--;
     if(CImpPcharProgressbar==0)
@@ -147,4 +176,38 @@ else
       }
     } 
   }
+//Acceleration
+if (a!=0)
+  {  
+  InterruptCounter100ms--;  
+  if (InterruptCounter100ms==0)
+    {
+    InterruptCounter100ms=Interrupt100ms;    
+    if (a_braking)
+      {
+      V-=a;
+      if (V<=V0)
+        {
+        V=V0;
+        a=0;      
+        }
+      }
+    else
+      {
+      V+=a;
+      if (V>=Vset)
+        {
+        V=Vset;
+        a=0;
+        g_ImpulseCountAcceleration-=g_ImpulseCounter;
+        }
+      }  
+    unsigned int TintCount=ceil(K_3600_FTtIC_Pulse1km / (float)V);
+    g_timerIntCntH=ceil( (float)((unsigned long)TintCount * (unsigned long)(100-Profile.PulseDuty) ) / 100.0 ) ;
+    if (TintCount>g_timerIntCntH) g_timerIntCntL=TintCount-g_timerIntCntH;else g_timerIntCntL=1;//количество прерываний для нижнего уровня импульса
+    #ifdef  _DEBUG_ACCELARATION
+    Debugln("V=%d g_timerIntCntH=%d g_timerIntCntL=%d",V,g_timerIntCntH,g_timerIntCntL);
+    #endif      
+    }
+  }  
 }

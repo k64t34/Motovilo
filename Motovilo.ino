@@ -1,11 +1,11 @@
-#define nDEBUG 1
+#define n_DEBUG 1
 unsigned long NextMillisCheck;
 #include "Motovilo.h" 
 
 void setup(){
 #ifdef _DEBUG
 Serial.begin(115200);
-Debugln("Setup.....");
+Debugln("Setup....."); 
 #endif  
 //#ifdef _DEBUG_PROFILE   1
 //for ( int i=0;i!=5;i++)
@@ -120,48 +120,7 @@ if (fRefreshInLoop)
     }
   }
 if (key) ScreenManager.Loop(key); 
- 
-//C_loops1min_downcounter--;
-//if (C_loops1min_downcounter==0)
-//  {
-//    C_loops1min_downcounter=C_loops1min;
-//  }
-  
-#ifdef  _DEBUG_GEN_CALC   
-lcd.setCursor(0,0);
-//lcd.print(g_InterruptCounter);
-lcd.print(g_ImpulseCounter);
-#endif 
-#ifdef  _DEBUG_GEN
-last_time=cur_time;
-cur_time=millis();
-long dtime = cur_time-last_time;
-lcd.setCursor(0,r_pos);
-lcd.print(millis() );
-lcd.write(' ');
-if (g_ImpulsePhase)
-  {
-  lcd.write('H');  
-  lcd.print(g_timerIntCntH);
-  }
-else  
-  {
-  lcd.write('L');  
-  lcd.print(g_timerIntCntL);
-  }
-lcd.write(' ');
-lcd.print(g_InterruptCounter);
-lcd.write(' ');
-lcd.print(g_ImpulseCounter);
-lcd.setCursor(0,2);
-lcd.print("dtime=");
-lcd.print(dtime);
-lcd.setCursor(0,3);
-lcd.print("irq/msec=");
-lcd.print(((double)(dInterruptCounter-lastdInterruptCounter)/dtime)*(double)1000.0);
-lastdInterruptCounter = dInterruptCounter;
-#endif
-
+   
 delay(T_loopdelay);
 }
 
