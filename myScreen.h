@@ -32,7 +32,7 @@ switch (Field->Type )
     sprintf(buff,Format,*(byte*)Field->Value);    
     break;     
   default:
-    sprintf(buff,"%s",*(byte*)Field->Value);
+    sprintf(buff,"%s",*(char*)Field->Value);
     break;
   }   
 }

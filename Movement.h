@@ -1,5 +1,5 @@
 #define MovementIndex 2
-#define NAMESPACE Movement
+#define NAMESPACE Movement                     
 #define SCREENROW1  "      Movement      "
 #define SCREENROW2  "                    "
 #define SCREENROW3  "rest 99:59 of 99:59 "
@@ -168,8 +168,9 @@ MyScreen Screen = {
 #undef FLD5_MAXVALUE 
 
 byte lastCharPosInProgressbar;
-
+//**************************************
 void Movement_Load(){
+//**************************************
 lastCharPosInProgressbar=0;
 printStatusString();
 GenSet();    
@@ -181,8 +182,9 @@ lcd.setCursor(5,2);
 sprintf(buff,"%02d:%02d",HH_left,MM_left);
 lcd.print(buff);
 lcd.setCursor(lastCharPosInProgressbar,1);
-}
+}//**************************************
 void Movement_Loop(){
+//**************************************  
 if(!gEnable)
   {  
   lcd.setCursor(0,0);
@@ -220,8 +222,9 @@ if (C_Refresh1min==0)
   lcd.print(buff); 
   lcd.setCursor(lastCharPosInProgressbar,1);
   }    
-}
+}//**************************************
 void Movement_Close(){
+//**************************************  
 lcd.blink();
 GenStop();
 }

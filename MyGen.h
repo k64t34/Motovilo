@@ -91,7 +91,7 @@ TIFR2=(1<<OCF2B)|(1<<OCF2A)|(1<< TOV2);// Сброс флагов прерыва
 ASSR|= (0<<AS2 ); // clk timer от внутреннего генератора CLK
 TIMSK2|=(1<<TOIE2);// Разрешени прерывания TOV
 //- задание режима Normal в TCCR без старта,
-TCCR2A |= (0<<COM2A1) || (0<<COM2A0) | (0<< COM2B1)| (0<< COM2B0)| (0<< WGM21)|(0<< WGM20);
+TCCR2A|=(0<<COM2A1) |(0<<COM2A0)|(0<<COM2B1)|(0<<COM2B0)|(0<<WGM21)|(0<<WGM20);
 //TCCR2B |= (1<<FOC2A)| (1<<FOC2B)|(0<<WGM22)|(0<<CS22)|(1<<CS21)|(0<<CS20); // Prescal / 8
 //TCCR2B |= (1<<FOC2A)| (1<<FOC2B)|(0<<WGM22)|(0<<CS22)|(1<<CS21)|(1<<CS20); // Prescal / 32
 TCCR2B |= (1<<FOC2A)| (1<<FOC2B)|(0<<WGM22)|(0<<CS22)|(0<<CS21)|(1<<CS20); // Prescal no prescaling
@@ -110,7 +110,7 @@ if (TintCount>g_timerIntCntH) g_timerIntCntL=TintCount-g_timerIntCntH;else g_tim
 g_ImpulseCounter=(unsigned long)Profile.Mileage * (unsigned long)Profile.Pulse1km;//количество импульсов для прохождения пути
 
 //Progress time
-int Tmin_trevel=ceil((float)(60*Profile.Mileage)/(float)Profile.Velocity);
+int Tmin_trevel=ceil((float)(60*(unsigned int)Profile.Mileage)/(float)Profile.Velocity);
 if (Tmin_trevel==0) Tmin_trevel=1;
 HH_trevel=floor((float)Profile.Mileage/(float)Profile.Velocity);
 MM_trevel=Tmin_trevel-60*HH_trevel;

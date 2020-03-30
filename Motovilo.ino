@@ -1,4 +1,4 @@
-#define n_DEBUG 1
+#define  no_DEBUG 1
 unsigned long NextMillisCheck;
 #include "Motovilo.h" 
 
@@ -7,17 +7,6 @@ void setup(){
 Serial.begin(115200);
 Debugln("Setup....."); 
 #endif  
-//#ifdef _DEBUG_PROFILE   1
-//for ( int i=0;i!=5;i++)
-//{
-//Debug("%d\t",i);
-//Debug("%d\t",(MyField*)(ScreenManager.Screens[0]->Rows[i]).Type);
-//serial.print(Value);Debug("\t");
-//serial.print(minValueValue);Debug("\t");
-//serial.print(maxValueValue);DebugLn("\t");  
-//Rows  
-//}
-//#endif
 kpd.begin(); 
 lcd.begin(LCD_COLS, LCD_ROWS);  
 lcd.clear();
@@ -31,24 +20,25 @@ for (byte r=0;r!=LCD_ROWS;r++)
       lcd.write(pgm_read_byte_near(adr));
       adr++;
     }
-  delay(1000);  
+  //delay(1000);  
   } 
 lcd.noDisplay();
-delay(500);    
+delay(100);    
 lcd.display();
-delay(1000);
+delay(800);
 lcd.noDisplay();
-delay(500);    
+delay(100);    
 lcd.display();
-delay(1000);
+delay(800);
 lcd.noDisplay();
-delay(500);    
+delay(100);    
 lcd.display();
-delay(1000);
+delay(800);
 #endif
-//eeprom_read_block((void*)&Profile, 0, sizeof(Profile));
+//
+// Read datafrom EEPROM
+//  eeprom_read_block((void*)&Profile, 0, sizeof(Profile));
 EEPROM.get(0,Profile);
-
 bool needRewrite=false;
 strcpy (Profile.Title,"Gazelle");
 if (Profile.Mileage<1 || Profile.Mileage>999)
@@ -56,10 +46,10 @@ if (Profile.Mileage<1 || Profile.Mileage>999)
   needRewrite=true;  
   Profile.Mileage=100;
   }
-if (Profile.Velocity<1 || Profile.Velocity>255) 
+if (Profile.Velocity<1 || Profile.Velocity>180) 
   {
   needRewrite=true;    
-  Profile.Velocity=60;
+  Profile.Velocity=160;
   }
 if (Profile.Pulse1km<1 || Profile.Pulse1km>=6000)
   {
@@ -87,6 +77,7 @@ DebugFloat("Profile.PulseVoltageHigh=%s\n",Profile.PulseVoltageHigh,3,1);
 DebugFloat("Profile.PulseVoltageLow=%s\n",Profile.PulseVoltageLow,3,1);
 Debugln("Profile.PulseDuty=%d",Profile.PulseDuty);
 #endif 
+//Assigng screen dialogs
 Choose_action::Screen.Loop= NULL;
 Choose_action::Screen.Load=&Choose_action_Load;
 Choose_action::Screen.Close=nullptr;
@@ -105,6 +96,9 @@ cur_time=millis();
 ScreenManager.Show(0);
 #endif
 GenTimerInit();
+#ifdef _DEBUG
+Debugln("Loop....."); 
+#endif  
 }
 //******************************************************************
 void loop(){

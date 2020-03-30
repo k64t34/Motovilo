@@ -96,7 +96,6 @@ const MyField Fields[FLD_COUNT]
 }
 #endif
 ;
-
 MyScreen Screen = {.Rows=(char*)Rows,.FieldsCount=FLD_COUNT,.Fields=Fields,.KB_mode=KB_MODE_DIGIT};
 }//end namespace
 

@@ -39,7 +39,7 @@ Keypad_I2C kpd = Keypad_I2C( makeKeymap(KP_KEYS),
 char key; // Pressed key in loop
 
 //***********************************************************
-lcd_print_center(int Row,String Text){ 
+void lcd_print_center(int Row,String Text){ 
 //***********************************************************
 int str_len=Text.length();
 if (str_len>=LCD_COLS)
@@ -68,7 +68,7 @@ struct MyProfile
   byte PulseDuty;  
   };  
 MyProfile Profile;
-printStatusString(){//************************************
+void printStatusString(){//************************************
 lcd.setCursor(0,3);
 lcd.print(Profile.Title);
 lcd.setCursor(7,3);
@@ -91,10 +91,10 @@ lcd.print("km");
 
 const char strBoot[LCD_ROWS][LCD_COLS] PROGMEM =
 {
-"  L O A D I N G ... ",
-" Crankshaft sensor  ",
-" TESTER   ver 0903  ",
-"   (c) Bosch 2020   "};
+"                    ",
+" ELEKTRONIKA  205   ",
+"                    ",
+"    ver 2803        "};
 
 /*
 // HW Info
